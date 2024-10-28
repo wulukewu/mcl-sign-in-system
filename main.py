@@ -2,6 +2,8 @@ import os
 import time
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
 
 def signInOut(InOrOut):
 
@@ -15,12 +17,18 @@ def signInOut(InOrOut):
     # otpauth_url = config_data['otpauth']
 
     # GitHub Actions
+    service = Service(ChromeDriverManager().install())
     username = os.environ['username']
     password = os.environ['password']
     otpauth_url = os.environ['otpauth']
     # ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
 
-    driver = webdriver.Chrome()
+    options = webdriver.ChromeOptions()
+    options.add_argument('--headless')
+    options.add_argument('--no-sandbox')
+    options.add_argument('--disable-dev-shm-usage')
+
+    driver = webdriver.Chrome(service=service, options=options)
     # driver.maximize_window()
 
     # Login Portal
