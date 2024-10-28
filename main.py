@@ -58,7 +58,7 @@ def signInOut(InOrOut):
 
         workContent = driver.find_element(By.ID, 'AttendWork')
         workContent.click()
-        workContent.send_keys('MCL 工讀')
+        workContent.send_keys('MCL工讀')
 
         signin_button = driver.find_element(By.ID, 'signin')
         signin_button.click()
