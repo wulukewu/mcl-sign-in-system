@@ -5,12 +5,20 @@ from selenium.webdriver.common.by import By
 
 def signInOut(InOrOut):
 
-    import json
-    with open('config.json', 'r') as config_file:
-        config_data = json.load(config_file)
-    username = config_data['username']
-    password = config_data['password']
-    otpauth_url = config_data['otpauth']
+    # ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
+    # Local Run
+    # import json
+    # with open('config.json', 'r') as config_file:
+    #     config_data = json.load(config_file)
+    # username = config_data['username']
+    # password = config_data['password']
+    # otpauth_url = config_data['otpauth']
+
+    # GitHub Actions
+    username = os.environ['username']
+    password = os.environ['password']
+    otpauth_url = os.environ['otpauth']
+    # ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
 
     driver = webdriver.Chrome()
     # driver.maximize_window()
