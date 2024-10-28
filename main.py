@@ -51,7 +51,7 @@ def signInOut(InOrOut):
     from otpauth import otpauth
     otp = otpauth(otpauth_url)
 
-    inputTotp = driver.find_element(By.CSS_SELECTOR, 'input#totp-code')
+    inputTotp = driver.find_element(By.XPATH, "//input[@id='totp-code']")
     inputTotp.click()
     inputTotp.send_keys(otp)
     inputTotp.submit()
