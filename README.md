@@ -1,4 +1,4 @@
-# Human Resource System
+# MCL Automatic Sign-in System
 
 ## Secrets Configuration
 
