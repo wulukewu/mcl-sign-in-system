@@ -21,8 +21,8 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      - name: Run main.py
-        run: python main.py
+      - name: Run signin.py
+        run: python signin.py
         env: 
           username: ${{ secrets.username }}
           password: ${{ secrets.password }}
