@@ -51,7 +51,7 @@ def signInOut(InOrOut):
     from otpauth import otpauth
     otp = otpauth(otpauth_url)
 
-    inputTotp = driver.find_element(By.XPATH, "//input[@id='totp-code']")
+    inputTotp = driver.find_element(By.ID, 'totp-code')
     inputTotp.click()
     inputTotp.send_keys(otp)
     inputTotp.submit()
@@ -96,5 +96,5 @@ def signInOut(InOrOut):
         print('Not Correct InOrOut! ')
 
     time.sleep(.5)
-    
+
     driver.close()
