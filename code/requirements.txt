@@ -1,0 +1,3 @@
+selenium
+pyotp
+python-dotenv
