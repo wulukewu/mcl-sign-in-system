@@ -6,7 +6,7 @@ Before using this application, please add the following three secrets after fork
 
 - **`username`**: Your Student ID
 - **`password`**: Your login password for the portal
-- **`otpauth`**: The otpauth URL to generate a six-character OTP code
+- **`otpauth`** [optional]: The otpauth URL to generate a six-character OTP code
 
 ## References
 
