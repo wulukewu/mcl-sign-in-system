@@ -1,2 +1,2 @@
-from code.main import signInOut
+from main import signInOut
 signInOut('signout')
