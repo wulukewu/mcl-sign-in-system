@@ -22,7 +22,7 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Run signout.py
-        run: python signout.py
+        run: python ./code/signout.py
         env: 
           username: ${{ secrets.username }}
           password: ${{ secrets.password }}
