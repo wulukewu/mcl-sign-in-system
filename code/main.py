@@ -2,6 +2,8 @@ import os
 import time
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
 
 def signInOut(InOrOut):
 
@@ -50,21 +52,28 @@ def signInOut(InOrOut):
 
     # Enter HumanSys
     driver.get('https://cis.ncu.edu.tw/HumanSys/login')
+    time.sleep(.5)
 
     submit_botton = driver.find_element(By.CLASS_NAME, 'btn-primary')
     submit_botton.click()
 
+    time.sleep(.5)
+
     driver.get('https://cis.ncu.edu.tw/HumanSys/student/stdSignIn')
+    time.sleep(.5)
 
     # add_signin_button = driver.find_element(By.CLASS_NAME, 'btn-default')
     add_signin_button = driver.find_element(By.CSS_SELECTOR, 'a.btn.btn-default')
     add_signin_button.click()
+
+    time.sleep(.5)
 
     if(InOrOut == 'signin'):
 
         workContent = driver.find_element(By.ID, 'AttendWork')
         workContent.click()
         workContent.send_keys('MCL工讀')
+        time.sleep(.5)
 
         signin_button = driver.find_element(By.ID, 'signin')
         signin_button.click()
@@ -77,5 +86,7 @@ def signInOut(InOrOut):
     else:
 
         print('Not Correct InOrOut! ')
+
+    time.sleep(.5)
 
     driver.close()

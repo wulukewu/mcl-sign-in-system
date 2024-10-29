@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  run-crawler:
+  run-signin:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
