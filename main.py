@@ -5,20 +5,16 @@ from selenium.webdriver.common.by import By
 
 def signInOut(InOrOut):
 
-    # ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
-    # Local Run
-    # import json
-    # with open('config.json', 'r') as config_file:
-    #     config_data = json.load(config_file)
-    # username = config_data['username']
-    # password = config_data['password']
-    # otpauth_url = config_data['otpauth']
-
-    # GitHub Actions
+    # Load environ
     username = os.environ['username']
     password = os.environ['password']
-    otpauth_url = os.environ['otpauth']
-    # ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
+
+    hasOTP = True
+    try:
+        otpauth_url = os.environ['otpauth']
+    except:
+        print('otpauth_url not detected')
+        hasOTP = False
 
     driver = webdriver.Chrome()
     # driver.maximize_window()
@@ -40,15 +36,17 @@ def signInOut(InOrOut):
 
     time.sleep(.5)
 
-    from otpauth import otpauth
-    otp = otpauth(otpauth_url)
+    if hasOTP:
 
-    inputTotp = driver.find_element(By.ID, 'totp-code')
-    inputTotp.click()
-    inputTotp.send_keys(otp)
-    inputTotp.submit()
+        from otpauth import otpauth
+        otp = otpauth(otpauth_url)
 
-    time.sleep(.5)
+        inputTotp = driver.find_element(By.ID, 'totp-code')
+        inputTotp.click()
+        inputTotp.send_keys(otp)
+        inputTotp.submit()
+
+        time.sleep(.5)
 
     # Enter HumanSys
     driver.get('https://cis.ncu.edu.tw/HumanSys/login')
