@@ -18,8 +18,9 @@ def signInOut(InOrOut):
 
     # Check for OTP availability
     otpauth_url = os.getenv('otpauth')
-    hasOTP = bool(otpauth_url)
-    if not hasOTP:
+    hasOTP = True
+    if otpauth_url == 'None':
+        hasOTP = False
         print('otpauth_url not detected')
 
     # Set up ChromeDriver
@@ -113,6 +114,6 @@ if __name__ == '__main__':
 
     os.environ['username'] = args.username
     os.environ['password'] = args.password
-    os.environ['otpauth'] = args.otpauth or None
+    os.environ['otpauth'] = args.otpauth or 'None'
 
     signInOut(args.inorout)
