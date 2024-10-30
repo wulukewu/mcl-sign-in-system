@@ -3,24 +3,23 @@ import time
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 
+import argparse
 from dotenv import load_dotenv
 load_dotenv()
 
 def signInOut(InOrOut):
 
-    exit_code = 0
+    # Load environ variables
+    username = os.getenv('username')
+    password = os.getenv('password')
 
-    # Load environ
-    username = os.environ['username']
-    password = os.environ['password']
-
-    hasOTP = True
-    try:
-        otpauth_url = os.environ['otpauth']
-    except:
+    # Check for OTP availability
+    otpauth_url = os.getenv('otpauth')
+    hasOTP = bool(otpauth_url)
+    if not hasOTP:
         print('otpauth_url not detected')
-        hasOTP = False
 
+    # Set up ChromeDriver
     driver = webdriver.Chrome()
     # driver.maximize_window()
 
@@ -42,7 +41,6 @@ def signInOut(InOrOut):
     time.sleep(.5)
 
     if hasOTP:
-
         from otpauth import otpauth
         otp = otpauth(otpauth_url)
 
@@ -65,14 +63,13 @@ def signInOut(InOrOut):
     driver.get('https://cis.ncu.edu.tw/HumanSys/student/stdSignIn')
     time.sleep(.5)
 
-    # add_signin_button = driver.find_element(By.CLASS_NAME, 'btn-default')
+    # Sign-in or sign-out actions
     add_signin_button = driver.find_element(By.CSS_SELECTOR, 'a.btn.btn-default')
     add_signin_button.click()
 
     time.sleep(.5)
 
-    if(InOrOut == 'signin'):
-
+    if InOrOut == 'signin':
         workContent = driver.find_element(By.ID, 'AttendWork')
         workContent.click()
         workContent.send_keys('MCL工讀')
@@ -81,29 +78,31 @@ def signInOut(InOrOut):
         signin_button = driver.find_element(By.ID, 'signin')
         signin_button.click()
     
-    elif(InOrOut == 'signout'):
-
+    elif InOrOut == 'signout':
         signout_button = driver.find_element(By.ID, 'signout')
         signout_button.click()
 
     else:
-
-        print('Not Correct InOrOut! ')
-        exit_code = 1
+        print('Invalid InOrOut option! Please specify "signin" or "signout".')
+        driver.close()
+        return
 
     time.sleep(.5)
 
     driver.close()
 
-    if exit_code == 0:
-        print(f"Finished '{InOrOut}' successfully. ")
+    print(f"'{InOrOut}' action completed successfully.")
 
 if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--inorout', default="signin", help="Specify 'signin' or 'signout' (default: 'signin')")
+    parser.add_argument('--username', required=True, help="Username for login")
+    parser.add_argument('--password', required=True, help="Password for login")
+    parser.add_argument('--otpauth', required=False, help="OTP authentication URL")
+    args = parser.parse_args()
 
-    try:
-        InOrOut = os.environ['inorout']
-    except:
-        print("No 'InOrOut' set; using default 'signin' instead.")
-        InOrOut = 'signin'
+    os.environ['username'] = args.username
+    os.environ['password'] = args.password
+    os.environ['otpauth'] = args.otpauth or None
 
-    signInOut(InOrOut)
+    signInOut(args.inorout)

@@ -1,3 +1,4 @@
-selenium
+argparse
 pyotp
 python-dotenv
+selenium
