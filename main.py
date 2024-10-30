@@ -96,4 +96,14 @@ def signInOut(InOrOut):
     driver.close()
 
     if exit_code == 0:
-        print(f"Finished '{InOrOut}' Successfully. ")
+        print(f"Finished '{InOrOut}' successfully. ")
+
+if __name__ == '__main__':
+
+    try:
+        InOrOut = os.environ['inorout']
+    except:
+        print("No 'InOrOut' set; using default 'signin' instead.")
+        InOrOut = 'signin'
+
+    signInOut(InOrOut)
