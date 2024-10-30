@@ -3,6 +3,7 @@ import time
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
+from chromedriver_py import binary_path
 from selenium.webdriver.common.by import By
 
 import argparse
@@ -22,10 +23,14 @@ def signInOut(InOrOut):
         print('otpauth_url not detected')
 
     # Set up ChromeDriver
-    options = Options()
-    options.headless = True  # Enable headless mode
-    #driver = webdriver.Chrome(service=Service('/usr/local/bin/chromedriver'), options=options)
-    driver = webdriver.Chrome()
+    service = Service(binary_path)
+    options = webdriver.ChromeOptions()
+    options.add_argument('--headless')
+    options.add_argument('--no-sandbox')
+    options.add_argument('--disable-dev-shm-usage')
+
+    driver = webdriver.Chrome(service=service, options=options)
+    # driver = webdriver.Chrome()
     # driver.maximize_window()
 
     # Login Portal

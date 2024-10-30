@@ -2,3 +2,5 @@ argparse
 pyotp
 python-dotenv
 selenium
+webdriver_manager
+chromedriver-py
