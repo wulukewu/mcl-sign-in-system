@@ -24,8 +24,8 @@ def signInOut(InOrOut):
     # Set up ChromeDriver
     options = Options()
     options.headless = True  # Enable headless mode
-    driver = webdriver.Chrome(service=Service('/usr/local/bin/chromedriver'), options=options)
-    # driver = webdriver.Chrome()
+    #driver = webdriver.Chrome(service=Service('/usr/local/bin/chromedriver'), options=options)
+    driver = webdriver.Chrome()
     # driver.maximize_window()
 
     # Login Portal
