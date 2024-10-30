@@ -3,6 +3,9 @@ import time
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 
+from dotenv import load_dotenv
+load_dotenv()
+
 def signInOut(InOrOut):
 
     # Load environ
