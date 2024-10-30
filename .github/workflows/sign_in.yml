@@ -22,7 +22,7 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Run signin.py
-        run: python ./code/signin.py
+        run: python signin.py
         env: 
           username: ${{ secrets.username }}
           password: ${{ secrets.password }}
