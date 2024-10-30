@@ -1,6 +1,8 @@
 import os
 import time
 from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 
 import argparse
@@ -20,7 +22,10 @@ def signInOut(InOrOut):
         print('otpauth_url not detected')
 
     # Set up ChromeDriver
-    driver = webdriver.Chrome()
+    options = Options()
+    options.headless = True  # Enable headless mode
+    driver = webdriver.Chrome(service=Service('/usr/local/bin/chromedriver'), options=options)
+    # driver = webdriver.Chrome()
     # driver.maximize_window()
 
     # Login Portal
