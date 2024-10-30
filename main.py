@@ -8,6 +8,8 @@ load_dotenv()
 
 def signInOut(InOrOut):
 
+    exit_code = 0
+
     # Load environ
     username = os.environ['username']
     password = os.environ['password']
@@ -87,7 +89,11 @@ def signInOut(InOrOut):
     else:
 
         print('Not Correct InOrOut! ')
+        exit_code = 1
 
     time.sleep(.5)
 
     driver.close()
+
+    if exit_code == 0:
+        print(f"Finished '{InOrOut}' Successfully. ")
