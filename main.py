@@ -5,13 +5,12 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from chromedriver_py import binary_path
 from selenium.webdriver.common.by import By
-
 import argparse
 from dotenv import load_dotenv
+
 load_dotenv()
 
 def signInOut(InOrOut):
-
     # Load environ variables
     username = os.getenv('username')
     password = os.getenv('password')
@@ -24,16 +23,13 @@ def signInOut(InOrOut):
         print('otpauth_url not detected')
 
     # Set up ChromeDriver
-    # service = Service(binary_path)
     service = Service('/usr/local/bin/chromedriver')
     options = webdriver.ChromeOptions()
-    options.add_argument('--headless')
+    # options.add_argument('--headless')
     options.add_argument('--no-sandbox')
     options.add_argument('--disable-dev-shm-usage')
 
     driver = webdriver.Chrome(options=options)
-    # driver = webdriver.Chrome()
-    # driver.maximize_window()
 
     # Login Portal
     driver.get('https://portal.ncu.edu.tw/login')
@@ -48,6 +44,32 @@ def signInOut(InOrOut):
     inputPassword = driver.find_element(By.ID, 'inputPassword')
     inputPassword.click()
     inputPassword.send_keys(password)
+
+    # Solve reCAPTCHA
+    try:
+        # Switch to reCAPTCHA iframe
+        frames = driver.find_elements(By.TAG_NAME, 'iframe')
+        for frame in frames:
+            if 'reCAPTCHA' in frame.get_attribute('title'):
+                driver.switch_to.frame(frame)
+                break
+
+        # Click the reCAPTCHA checkbox
+        recaptcha_checkbox = driver.find_element(By.CLASS_NAME, 'recaptcha-checkbox')
+        recaptcha_checkbox.click()
+
+        # Switch back to the main content
+        driver.switch_to.default_content()
+
+        # Wait for the reCAPTCHA to be solved manually
+        print("Please solve the reCAPTCHA manually and press Enter to continue...")
+        input()
+
+    except Exception as e:
+        print(f"Failed to solve reCAPTCHA: {e}")
+        driver.quit()
+        return
+
     inputPassword.submit()
 
     time.sleep(.5)
