@@ -24,13 +24,14 @@ def signInOut(InOrOut):
         print('otpauth_url not detected')
 
     # Set up ChromeDriver
-    service = Service(binary_path)
+    # service = Service(binary_path)
+    service = Service('/usr/local/bin/chromedriver')
     options = webdriver.ChromeOptions()
     options.add_argument('--headless')
     options.add_argument('--no-sandbox')
     options.add_argument('--disable-dev-shm-usage')
 
-    driver = webdriver.Chrome(service=service, options=options)
+    driver = webdriver.Chrome(options=options)
     # driver = webdriver.Chrome()
     # driver.maximize_window()
 
