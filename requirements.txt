@@ -4,3 +4,10 @@ python-dotenv
 selenium
 webdriver_manager
 chromedriver-py
+
+# Recaptchasolver
+os-sys
+regex
+urllib3
+pydub
+SpeechRecognition
