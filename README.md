@@ -14,3 +14,4 @@ Before using this application, please add the following three secrets after fork
 - [Day 15: Dynamic Web Page Scraping 2 - Selenium Data Location Functions](https://ithelp.ithome.com.tw/articles/10300961)
 - [【 Python 】利用 .env 與環境變數隱藏敏感資訊](https://learningsky.io/python-use-environmental-variables-to-hide-sensitive-information/)
 - [Pull a certain branch from the remote server](https://stackoverflow.com/questions/1709177/pull-a-certain-branch-from-the-remote-server)
+- [recaptcha_v2_solver](https://github.com/ohyicong/recaptcha_v2_solver)
