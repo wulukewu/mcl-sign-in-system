@@ -137,16 +137,16 @@ def signInOut(InOrOut):
             )
             driver.find_element(By.ID, 'recaptcha-demo-submit').click()
         except Exception as e:
-            # print("[ERR] Unable to find the submit button. Abort solver: {e}")
-            print("[ERR] Unable to find the submit button. Abort solver.")
+            print("[ERR] Unable to find the submit button. Abort solver: \n{e}")
+            # print("[ERR] Unable to find the submit button. Abort solver.")
 
         # Finished reCAPTCHA solving with audio challenge.
         print('Finished reCAPTCHA solving with audio challenge.')
 
     except Exception as e:
         # Finished reCAPTCHA solving without audio challenge.
-        # print(f'Finished reCAPTCHA solving without audio challenge: {e}')
-        print(f'Finished reCAPTCHA solving without audio challenge.')
+        print(f'Finished reCAPTCHA solving without audio challenge: \n{e}')
+        # print(f'Finished reCAPTCHA solving without audio challenge.')
         pass
 
     login_button = driver.find_element(By.CSS_SELECTOR, "button.btn.btn-primary")
