@@ -6,7 +6,7 @@ webdriver_manager
 chromedriver-py
 
 # Recaptchasolver
-os-sys
+# os-sys
 regex
 urllib3
 pydub
