@@ -1,20 +1,19 @@
 import os
 import time
+import re
+import urllib
+import argparse
+from dotenv import load_dotenv
+import pydub
+import speech_recognition as sr
+
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
-from chromedriver_py import binary_path
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-import argparse
-from dotenv import load_dotenv
-
-import re
-import urllib
-import pydub
-import speech_recognition as sr
 from selenium.webdriver.common.keys import Keys
 
 load_dotenv()

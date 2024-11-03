@@ -1,13 +1,11 @@
 argparse
+pydub
 pyotp
 python-dotenv
-selenium
-webdriver_manager
-chromedriver-py
-
-# Recaptchasolver
-# os-sys
 regex
-urllib3
-pydub
+selenium
 SpeechRecognition
+urllib3
+webdriver_manager
+# chromedriver-py
+# os-sys
