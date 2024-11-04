@@ -58,6 +58,8 @@ def signInOut(InOrOut):
 
     time.sleep(.5)
 
+    actions = ActionChains(driver)
+
     # Solve reCAPTCHA
     frames = driver.find_elements(By.TAG_NAME, 'iframe')
     recaptcha_control_frame = None
@@ -70,27 +72,37 @@ def signInOut(InOrOut):
             recaptcha_challenge_frame = frame
     if not (recaptcha_control_frame and recaptcha_challenge_frame):
         print("[ERR] Unable to find recaptcha. Abort solver.")
-        return
+        # return
 
-    # Switch to recaptcha frame
-    time.sleep(.5)
-    driver.switch_to.frame(recaptcha_control_frame)
-    recaptcha_checkbox = driver.find_element(By.CLASS_NAME, 'recaptcha-checkbox-border')
+    try:
+        # Switch to recaptcha frame
+        time.sleep(.5)
+        driver.switch_to.frame(recaptcha_control_frame)
+        recaptcha_checkbox = driver.find_element(By.CLASS_NAME, 'recaptcha-checkbox-border')
 
-    # Move cursor to the reCAPTCHA checkbox and click
-    actions = ActionChains(driver)
-    actions.move_to_element(recaptcha_checkbox).click().perform()
+        # Move cursor to the reCAPTCHA checkbox and click
+        actions.move_to_element(recaptcha_checkbox).click().perform()
 
-    # Switch to recaptcha audio control frame
-    time.sleep(5)
-    driver.switch_to.default_content()
-    frames = driver.find_elements(By.TAG_NAME, 'iframe')
-    driver.switch_to.frame(recaptcha_challenge_frame)
+    except Exception as e:
+        # print(f"[ERR] Unable to find the reCAPTCHA checkbox. Abort solver: \n{e}")
+        print("[ERR] Unable to find the reCAPTCHA checkbox. Abort solver.")
+        pass
 
-    # Click on audio challenge
-    time.sleep(10)
-    audio_button = driver.find_element(By.ID, 'recaptcha-audio-button')
-    actions.move_to_element(audio_button).click().perform()
+    try:
+        # Switch to recaptcha audio control frame
+        time.sleep(5)
+        driver.switch_to.default_content()
+        frames = driver.find_elements(By.TAG_NAME, 'iframe')
+        driver.switch_to.frame(recaptcha_challenge_frame)
+
+        # Click on audio challenge
+        time.sleep(10)
+        audio_button = driver.find_element(By.ID, 'recaptcha-audio-button')
+        actions.move_to_element(audio_button).click().perform()
+    except Exception as e:
+        # print(f"[ERR] Unable to find the audio challenge button. Abort solver: \n{e}")
+        print("[ERR] Unable to find the audio challenge button. Abort solver.")
+        pass
 
     try:
         # Switch to recaptcha audio challenge frame
@@ -137,16 +149,16 @@ def signInOut(InOrOut):
             )
             driver.find_element(By.ID, 'recaptcha-demo-submit').click()
         except Exception as e:
-            print("[ERR] Unable to find the submit button. Abort solver: \n{e}")
-            # print("[ERR] Unable to find the submit button. Abort solver.")
+            # print("[ERR] Unable to find the submit button. Abort solver: \n{e}")
+            print("[ERR] Unable to find the submit button. Abort solver.")
 
         # Finished reCAPTCHA solving with audio challenge.
         print('Finished reCAPTCHA solving with audio challenge.')
 
     except Exception as e:
         # Finished reCAPTCHA solving without audio challenge.
-        print(f'Finished reCAPTCHA solving without audio challenge: \n{e}')
-        # print(f'Finished reCAPTCHA solving without audio challenge.')
+        # print(f'Finished reCAPTCHA solving without audio challenge: \n{e}')
+        print(f'Finished reCAPTCHA solving without audio challenge.')
         pass
 
     login_button = driver.find_element(By.CSS_SELECTOR, "button.btn.btn-primary")
