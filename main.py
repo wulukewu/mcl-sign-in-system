@@ -123,11 +123,12 @@ def signInOut(InOrOut):
                     driver.switch_to.default_content()
 
             if not audio_source_found:
-                print("[ERR] Unable to find the audio source in any frame.\nRetrying to close page and login again in one minute...")
+                print("[ERR] Unable to find the audio source in any frame.")
+                print("\nRetrying to close page and login again in one minute...")
                 driver.quit()
                 time.sleep(60)
                 signInOut(InOrOut)
-                # return
+                return
 
             else:
                 path_to_mp3 = os.path.normpath(os.path.join(os.getcwd(), "sample.mp3"))

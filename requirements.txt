@@ -1,5 +1,4 @@
 argparse
-# pydub
 pyotp
 python-dotenv
 regex
@@ -8,5 +7,3 @@ SpeechRecognition
 urllib3
 webdriver_manager
 ffmpeg-python
-# chromedriver-py
-# os-sys
