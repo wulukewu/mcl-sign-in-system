@@ -1,19 +1,14 @@
 import os
 import time
-import re
+import ffmpeg
 import urllib
 import argparse
-from dotenv import load_dotenv
-import ffmpeg
 import speech_recognition as sr
+from dotenv import load_dotenv
 
 from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.action_chains import ActionChains
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.keys import Keys
 
 load_dotenv()
@@ -128,58 +123,61 @@ def signInOut(InOrOut):
                     driver.switch_to.default_content()
 
             if not audio_source_found:
-                print("[ERR] Unable to find the audio source in any frame.")
-                # driver.quit()
+                print("[ERR] Unable to find the audio source in any frame.\nRetrying to close page and login again in one minute...")
+                driver.quit()
+                time.sleep(60)
+                signInOut(InOrOut)
                 # return
 
-            path_to_mp3 = os.path.normpath(os.path.join(os.getcwd(), "sample.mp3"))
-            path_to_wav = os.path.normpath(os.path.join(os.getcwd(), "sample.wav"))
-
-            # download the mp3 audio file from the source
-            urllib.request.urlretrieve(src, path_to_mp3)
-
-            # Load downloaded mp3 audio file as .wav using ffmpeg
-            # try:
-            ffmpeg.input(path_to_mp3).output(path_to_wav).run()
-            sample_audio = sr.AudioFile(path_to_wav)
-            # except Exception as e:
-            #     print(f"[ERR] Failed to convert audio file: {e}")
-            #     driver.quit()
-            #     return
-
-            # translate audio to text with google voice recognition
-            time.sleep(3)
-            r = sr.Recognizer()
-
-            passcode_recognized = False
-            with sr.AudioFile(path_to_wav) as source:
-                audio_file = r.record(source)
-                try:
-                    key = r.recognize_google(audio_file, language='en-US', show_all=True)['alternative'][0]['transcript']
-                    passcode_recognized = True
-                    print(f"[INFO] Recaptcha Passcode: {key}")
-                except sr.UnknownValueError:
-                    print("[ERR] Google Speech Recognition could not understand the audio")
-                except sr.RequestError as e:
-                    print(f"[ERR] Could not request results from Google Speech Recognition service; {e}")
-
-            # key in results and submit
-            if passcode_recognized:
-                time.sleep(3)
-                # driver.find_element_by_id("audio-response").send_keys(key.lower())
-                driver.find_element(By.ID, 'audio-response').send_keys(key.lower())
-                # driver.find_element_by_id("audio-response").send_keys(Keys.ENTER)
-                driver.find_element(By.ID, 'audio-response').send_keys(Keys.ENTER)
-                time.sleep(3)
-                driver.switch_to.default_content()
-                time.sleep(3)
-                # driver.find_element_by_id("recaptcha-demo-submit").click()
-                # driver.find_element(By.ID, 'recaptcha-demo-submit').click()
-                # if (tor_process):
-                #     tor_process.kill()
             else:
-                print("[ERR] Failed to enter the audio passcode.")
+                path_to_mp3 = os.path.normpath(os.path.join(os.getcwd(), "sample.mp3"))
+                path_to_wav = os.path.normpath(os.path.join(os.getcwd(), "sample.wav"))
 
+                # download the mp3 audio file from the source
+                urllib.request.urlretrieve(src, path_to_mp3)
+
+                # Load downloaded mp3 audio file as .wav using ffmpeg
+                try:
+                    ffmpeg.input(path_to_mp3).output(path_to_wav).run()
+                except Exception as e:
+                    print(f"[ERR] Failed to convert audio file: {e}")
+                    driver.quit()
+                    return
+
+                # translate audio to text with google voice recognition
+                time.sleep(3)
+                r = sr.Recognizer()
+
+                passcode_recognized = False
+                with sr.AudioFile(path_to_wav) as source:
+                    audio_file = r.record(source)
+                    try:
+                        key = r.recognize_google(audio_file, language='en-US', show_all=True)['alternative'][0]['transcript']
+                        passcode_recognized = True
+                        print(f"[INFO] Recaptcha Passcode: {key}")
+                    except sr.UnknownValueError:
+                        print("[ERR] Google Speech Recognition could not understand the audio")
+                    except sr.RequestError as e:
+                        print(f"[ERR] Could not request results from Google Speech Recognition service; {e}")
+
+                # key in results and submit
+                if passcode_recognized:
+                    time.sleep(3)
+                    # driver.find_element_by_id("audio-response").send_keys(key.lower())
+                    driver.find_element(By.ID, 'audio-response').send_keys(key.lower())
+                    # driver.find_element_by_id("audio-response").send_keys(Keys.ENTER)
+                    driver.find_element(By.ID, 'audio-response').send_keys(Keys.ENTER)
+                    time.sleep(3)
+                    driver.switch_to.default_content()
+                    time.sleep(3)
+                    # driver.find_element_by_id("recaptcha-demo-submit").click()
+                    # driver.find_element(By.ID, 'recaptcha-demo-submit').click()
+                    # if (tor_process):
+                    #     tor_process.kill()
+                else:
+                    print("[ERR] Failed to enter the audio passcode.")
+
+    # Press login botton
     login_button = driver.find_element(By.CSS_SELECTOR, "button.btn.btn-primary")
     actions.move_to_element(login_button).click().perform()
     
@@ -239,15 +237,22 @@ def signInOut(InOrOut):
     print(f"'{InOrOut}' action completed successfully.")
 
 if __name__ == '__main__':
+    # Initialize argument parser
     parser = argparse.ArgumentParser()
+    
+    # Add arguments for the script
     parser.add_argument('--inorout', default="signin", help="Specify 'signin' or 'signout' (default: 'signin')")
     parser.add_argument('--username', required=True, help="Username for login")
     parser.add_argument('--password', required=True, help="Password for login")
     parser.add_argument('--otpauth', required=False, help="OTP authentication URL")
+    
+    # Parse the arguments
     args = parser.parse_args()
 
+    # Set environment variables from parsed arguments
     os.environ['username'] = args.username
     os.environ['password'] = args.password
     os.environ['otpauth'] = args.otpauth or 'None'
 
+    # Call the signInOut function with the specified action
     signInOut(args.inorout)

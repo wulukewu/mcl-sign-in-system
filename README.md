@@ -1,12 +1,34 @@
 # MCL Automatic Sign-in System
 
-## Secrets Configuration
+## Hub
 
-Before using this application, please add the following three secrets after forking this repository:
+**Docker Hub**: [wulukewu/mcl-sign-in-system](https://hub.docker.com/r/wulukewu/mcl-sign-in-system)
 
-- **`username`**: Your Student ID
-- **`password`**: Your login password for the portal
-- **`otpauth`** [optional]: The otpauth URL to generate a six-character OTP code
+**GitHub**: [wulukewu/mcl-sign-in-system](https://github.com/wulukewu/mcl-sign-in-system)
+
+To automatically run this Docker on GitHub Actions, see this repository: [wulukewu/mcl-sign-in-system-runner](https://github.com/wulukewu/mcl-sign-in-system-runner)
+
+## Parameters
+
+- **`--inorout`**: Specify `"signin"` or `"signout"` for the desired action.
+- **`--username`**: Your Student ID used for login.
+- **`--password`**: Password for your portal login.
+- **`--otpauth`** [optional]: OTP URL to generate a one-time password (OTP) for two-factor authentication.
+
+## Usage
+
+To run the script, use the following command:
+
+```sh
+python main.py --inorout <signin|signout> --username <your_username> --password <your_password> --otpauth <[optional] otpauth_url>
+```
+
+## Docker
+To build and run the Docker container, use the following commands:
+```sh
+docker build -t mcl-sign-in-system .
+docker run mcl-sign-in-system --inorout <signin|signout> --username <your_username> --password <your_password> --otpauth <[optional] otpauth_url>
+```
 
 ## References
 
