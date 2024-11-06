@@ -1,5 +1,7 @@
 # MCL Automatic Sign-in System
 
+An auto sign-in/sign-out system for NCU HumanSys. 
+
 ## Hub
 
 **GitHub**: [wulukewu/mcl-sign-in-system](https://github.com/wulukewu/mcl-sign-in-system)
