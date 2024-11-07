@@ -199,8 +199,16 @@ def signInOut(InOrOut):
     driver.get('https://cis.ncu.edu.tw/HumanSys/login')
     time.sleep(.5)
 
-    submit_botton = driver.find_element(By.CLASS_NAME, 'btn-primary')
-    actions.move_to_element(submit_botton).click().perform()
+    try:
+        # Try to enter HumanSys
+        submit_botton = driver.find_element(By.CLASS_NAME, 'btn-primary')
+        actions.move_to_element(submit_botton).click().perform()
+    except:
+        # Potentially malicious website
+        # "Caution! The site you are about to visit is not officially approved, the above system info might also be fraud, the url is: https://cis.ncu.edu.tw/HumanSys/login"
+        print('[ERR] Potentially malicious website detected on HumanSys.')
+        submit_botton = driver.find_element(By.CLASS_NAME, 'btn-danger')
+        actions.move_to_element(submit_botton).click().perform()
 
     time.sleep(.5)
 
