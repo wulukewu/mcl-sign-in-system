@@ -1,5 +1,10 @@
 # MCL Automatic Sign-in System
 
+![GitHub last commit](https://img.shields.io/github/last-commit/wulukewu/mcl-sign-in-system?style=for-the-badge)
+![GitHub issues](https://img.shields.io/github/issues/wulukewu/mcl-sign-in-system?style=for-the-badge)
+![Docker Pulls](https://img.shields.io/docker/pulls/wulukewu/mcl-sign-in-system?style=for-the-badge)
+![Docker Image Size (tag)](https://img.shields.io/docker/image-size/wulukewu/mcl-sign-in-system/latest?label=latest%20image%20size&style=for-the-badge)
+
 An auto sign-in/sign-out system for NCU HumanSys. 
 
 ## Hub
