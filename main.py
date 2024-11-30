@@ -27,7 +27,7 @@ def signInOut(InOrOut):
 
     # Set up ChromeDriver
     options = webdriver.ChromeOptions()
-    options.add_argument('--headless')
+    # options.add_argument('--headless')
     options.add_argument('--no-sandbox')
     options.add_argument('--disable-dev-shm-usage')
     options.add_argument('--disable-gpu')
@@ -161,6 +161,10 @@ def signInOut(InOrOut):
                     except sr.RequestError as e:
                         print(f"[ERR] Could not request results from Google Speech Recognition service; {e}")
 
+                # Clean up
+                os.remove(path_to_mp3)
+                os.remove(path_to_wav)
+
                 # key in results and submit
                 if passcode_recognized:
                     time.sleep(3)
@@ -177,6 +181,15 @@ def signInOut(InOrOut):
                     #     tor_process.kill()
                 else:
                     print("[ERR] Failed to enter the audio passcode.")
+                
+                try:
+                    error_message = driver.find_element(By.CLASS_NAME, 'rc-audiochallenge-error-message')
+                    if error_message:
+                        print(f"[ERR] Error message: {error_message.text}")
+                        driver.quit()
+                        signInOut(InOrOut)
+                except:
+                    pass
 
     # Press login botton
     login_button = driver.find_element(By.CSS_SELECTOR, "button.btn.btn-primary")
@@ -194,6 +207,12 @@ def signInOut(InOrOut):
         inputTotp.submit()
 
         time.sleep(.5)
+
+    # # Stop here
+    # print('-'*5 + 'Restarting the script...' + "-"*5)
+    # driver.quit()
+    # signInOut(InOrOut)
+    # return
 
     # Enter HumanSys
     driver.get('https://cis.ncu.edu.tw/HumanSys/login')
