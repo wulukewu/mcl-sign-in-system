@@ -124,7 +124,7 @@ def signInOut(InOrOut):
 
             if not audio_source_found:
                 print("[ERR] Unable to find the audio source in any frame.")
-                print("\nRetrying to close page and login again in one minute...")
+                print("\nRetrying to close page and login again...")
                 driver.quit()
                 # time.sleep(60)
                 signInOut(InOrOut)
