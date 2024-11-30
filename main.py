@@ -201,10 +201,16 @@ def signInOut(InOrOut):
         from otpauth import otpauth
         otp = otpauth(otpauth_url)
 
-        inputTotp = driver.find_element(By.ID, 'totp-code')
-        inputTotp.click()
-        inputTotp.send_keys(otp)
-        inputTotp.submit()
+        try:
+            inputTotp = driver.find_element(By.ID, 'totp-code')
+            inputTotp.click()
+            inputTotp.send_keys(otp)
+            inputTotp.submit()
+        except:
+            print('[ERR] Failed to enter OTP code. Retrying...')
+            driver.quit()
+            signInOut(InOrOut)
+            return
 
         time.sleep(.5)
 
