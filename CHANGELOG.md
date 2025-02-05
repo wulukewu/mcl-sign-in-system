@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0](https://github.com/wulukewu/mcl-sign-in-system/compare/v1.1.0...v1.2.0) (2025-02-05)
+
+
+### Features
+
+* add detect to alert message ([ee70d01](https://github.com/wulukewu/mcl-sign-in-system/commit/ee70d014a510f186e0eb417bb552cb0d015910a4))
+
 ## 1.0.0 (2025-02-05)
 
 
