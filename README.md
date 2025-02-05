@@ -13,7 +13,29 @@ An auto sign-in/sign-out system for NCU HumanSys.
 
 **Docker Hub**: [wulukewu/mcl-sign-in-system](https://hub.docker.com/r/wulukewu/mcl-sign-in-system)
 
-To automatically run this Docker on GitHub Actions, see this repository: [wulukewu/mcl-sign-in-system-runner](https://github.com/wulukewu/mcl-sign-in-system-runner)
+## Quick Start
+
+Run the container with the following command, replacing `your_username`, `your_password`, and `your_otpauth_url` with your actual credentials:
+
+```bash
+docker run -e username=your_username \
+           -e password=your_password \
+           -e otpauth=your_otpauth_url \
+           -e inorout=signout \
+           wulukewu/mcl-sign-in-system:latest
+```
+
+To sign in instead of signing out (which is the default), omit the `-e inorout=signout` line.  Also, omit the `-e otpauth=your_otpauth_url` line if you don't use OTP.
+
+## Secrets Configuration (GitHub Actions)
+
+If you're using GitHub Actions, add the following secrets under your repository settings:
+
+- `username`: Your Student ID used for login.
+- `password`: Password for your portal login.
+- `otpauth` [optional]: OTP URL to generate a one-time password (OTP) for two-factor authentication.
+
+Remember to adjust the `inorout` value as needed.
 
 ## Parameters
 
