@@ -1,4 +1,5 @@
 argparse
+ffmpeg-python
 pyotp
 python-dotenv
 regex
@@ -6,4 +7,3 @@ selenium
 SpeechRecognition
 urllib3
 webdriver_manager
-ffmpeg-python
