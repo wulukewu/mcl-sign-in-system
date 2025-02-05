@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.0](https://github.com/wulukewu/mcl-sign-in-system/compare/v1.0.0...v1.1.0) (2025-02-05)
+
+
+### Features
+
+* fix tags of docker image in deploy.yml ([9eb1aa5](https://github.com/wulukewu/mcl-sign-in-system/commit/9eb1aa5fb5ab86d75368e46a5032e8acaf002f2f))
+
 ## 1.0.0 (2025-02-05)
 
 
