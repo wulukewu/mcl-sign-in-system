@@ -41,7 +41,7 @@ jobs:
         with:
           images: |
             ${{ env.GHCR_REGISTRY }}/${{ env.IMAGE_NAME }}
-            ${{ env.DOCKERHUB_REGISTRY }}/wulukewu/${{ github.repository }}
+            ${{ env.DOCKERHUB_REGISTRY }}/wulukewu/mcl-sign-in-system
           tags: |
             type=semver,pattern={{version}}
 
@@ -59,6 +59,6 @@ jobs:
           context: .
           push: true
           tags: |
-            ${{ env.DOCKERHUB_REGISTRY }}/${{ secrets.DOCKERHUB_USERNAME }}/${{ github.repository }}
-            ${{ env.DOCKERHUB_REGISTRY }}/${{ secrets.DOCKERHUB_USERNAME }}/${{ github.repository }}:${{ github.run_number }}
+            ${{ env.DOCKERHUB_REGISTRY }}/wulukewu/mcl-sign-in-system:latest
+            ${{ env.DOCKERHUB_REGISTRY }}/wulukewu/mcl-sign-in-system:${{ github.run_number }}
           labels: ${{ steps.meta.outputs.labels }}
