@@ -2,10 +2,8 @@ import os
 import time
 import ffmpeg
 import urllib
-import argparse
 import speech_recognition as sr
 from dotenv import load_dotenv
-
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.action_chains import ActionChains
@@ -21,7 +19,8 @@ def signInOut(InOrOut):
     # Check for OTP availability
     otpauth_url = os.getenv('otpauth')
     hasOTP = True
-    if otpauth_url == 'None':
+
+    if otpauth_url == 'None' or otpauth_url is None:
         hasOTP = False
         print('otpauth_url not detected')
 
@@ -86,6 +85,7 @@ def signInOut(InOrOut):
 
         # click on audio challenge
         time.sleep(1)
+
         # Iterate through all frames to find the audio challenge button
         audio_button_found = False
         for index, frame in enumerate(frames):
@@ -181,7 +181,7 @@ def signInOut(InOrOut):
     # Press login botton
     login_button = driver.find_element(By.CSS_SELECTOR, "button.btn.btn-primary")
     actions.move_to_element(login_button).click().perform()
-    
+
     time.sleep(.5)
 
     if hasOTP:
@@ -221,7 +221,7 @@ def signInOut(InOrOut):
         print(f'[ERR] {alert_message.text}')
         driver.close()
         return
-    
+
     except Exception as e:
         print('[INFO] No alert message detected.')
 
@@ -239,7 +239,7 @@ def signInOut(InOrOut):
 
         signin_button = driver.find_element(By.ID, 'signin')
         signin_button.click()
-    
+
     elif InOrOut == 'signout':
         signout_button = driver.find_element(By.ID, 'signout')
         signout_button.click()
@@ -256,22 +256,8 @@ def signInOut(InOrOut):
     print(f"'{InOrOut}' action completed successfully.")
 
 if __name__ == '__main__':
-    # Initialize argument parser
-    parser = argparse.ArgumentParser()
-    
-    # Add arguments for the script
-    parser.add_argument('--inorout', default="signin", help="Specify 'signin' or 'signout' (default: 'signin')")
-    parser.add_argument('--username', required=True, help="Username for login")
-    parser.add_argument('--password', required=True, help="Password for login")
-    parser.add_argument('--otpauth', required=False, help="OTP authentication URL")
-    
-    # Parse the arguments
-    args = parser.parse_args()
-
-    # Set environment variables from parsed arguments
-    os.environ['username'] = args.username
-    os.environ['password'] = args.password
-    os.environ['otpauth'] = args.otpauth or 'None'
+    # Get inorout from environment, default to "signin"
+    inorout = os.getenv('inorout', 'signin')
 
     # Call the signInOut function with the specified action
-    signInOut(args.inorout)
+    signInOut(inorout)
