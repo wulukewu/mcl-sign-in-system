@@ -215,6 +215,16 @@ def signInOut(InOrOut):
     driver.get('https://cis.ncu.edu.tw/HumanSys/student/stdSignIn')
     time.sleep(.5)
 
+    # Check for alert message
+    try:
+        alert_message = driver.find_element(By.XPATH, '//*[@id="form1"]/div')
+        print(f'[ERR] {alert_message.text}')
+        driver.close()
+        return
+    
+    except Exception as e:
+        print('[INFO] No alert message detected.')
+
     # Sign-in or sign-out actions
     add_signin_button = driver.find_element(By.CSS_SELECTOR, 'a.btn.btn-default')
     actions.move_to_element(add_signin_button).click().perform()
