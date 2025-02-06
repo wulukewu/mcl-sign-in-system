@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.0](https://github.com/wulukewu/mcl-sign-in-system/compare/v1.3.0...v1.4.0) (2025-02-06)
+
+
+### Features
+
+* update docker run command ([8f79216](https://github.com/wulukewu/mcl-sign-in-system/commit/8f7921668d70794a5d4abb666c46d16492c607ad))
+
 ## [1.3.0](https://github.com/wulukewu/mcl-sign-in-system/compare/v1.2.0...v1.3.0) (2025-02-06)
 
 
