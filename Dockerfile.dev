@@ -1,12 +1,5 @@
-# Use an official Python runtime as a parent image 
-FROM python:3.9 AS builder
-
-# Enable custom virtual environment
-ENV VIRTUAL_ENV=/opt/venv
-ENV PATH="$VIRTUAL_ENV/bin:$PATH"
-
-# Add requirements file
-COPY requirements.txt .
+# Use an official Python runtime as a parent image
+FROM python:3.9
 
 # Set the working directory in the container
 WORKDIR /app
@@ -15,13 +8,9 @@ WORKDIR /app
 COPY . /app
 
 # Install dependencies
-RUN python -m venv ${VIRTUAL_ENV} && \
-    pip install --no-cache-dir --upgrade pip && \
-    pip install --no-cache-dir --upgrade setuptools && \
-    pip install --no-cache-dir -r requirements.txt
-
-# Use an official Python runtime as a parent image
-FROM python:3.9
+RUN pip install --upgrade pip
+RUN pip install --upgrade setuptools
+RUN pip install -r requirements.txt
 
 # Install Chrome and Xvfb
 RUN apt-get update && apt-get install -y wget gnupg
@@ -34,19 +23,6 @@ RUN apt-get install -y fonts-liberation libappindicator3-1 libasound2 libatk-bri
 
 # Install ffmpeg
 RUN apt-get install -y ffmpeg
-
-# Enable custom virtual environment
-ENV VIRTUAL_ENV=/opt/venv
-ENV PATH="$VIRTUAL_ENV/bin:$PATH"
-
-# Copy dependencies from previous stage
-COPY --from=builder $VIRTUAL_ENV $VIRTUAL_ENV
-
-# Set the working directory
-WORKDIR /app
-
-# Copy the current directory contents into the container at /app
-COPY . /app
 
 # Set environment variables
 ENV DISPLAY=:99
