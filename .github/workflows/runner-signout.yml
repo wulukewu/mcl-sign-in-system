@@ -29,7 +29,7 @@ jobs:
         discord_channel_id="${{ secrets.discord_channel_id }}"
         
         docker run wulukewu/mcl-sign-in-system:dev\
-          --inorout signout \
+          -e inorout=signout \
           -e username="$username" \
           -e password="$password" \
           -e otpauth="$otpauth" \
