@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.0](https://github.com/wulukewu/mcl-sign-in-system/compare/v1.4.0...v1.5.0) (2025-02-06)
+
+
+### Features
+
+* remove load_dotenv requirement ([adfc3db](https://github.com/wulukewu/mcl-sign-in-system/commit/adfc3db189cc6215f6ede1b9484357757a0b93e1))
+
 ## [1.4.0](https://github.com/wulukewu/mcl-sign-in-system/compare/v1.3.0...v1.4.0) (2025-02-06)
 
 
