@@ -2,16 +2,16 @@ import os
 import time
 import ffmpeg
 import urllib
-import argparse
 import speech_recognition as sr
 from dotenv import load_dotenv
-
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.keys import Keys
 
-load_dotenv()
+import notification as nt
+
+# load_dotenv()
 
 def signInOut(InOrOut):
     # Load environ variables
@@ -21,7 +21,8 @@ def signInOut(InOrOut):
     # Check for OTP availability
     otpauth_url = os.getenv('otpauth')
     hasOTP = True
-    if otpauth_url == 'None':
+
+    if otpauth_url == 'None' or otpauth_url is None:
         hasOTP = False
         print('otpauth_url not detected')
 
@@ -75,8 +76,9 @@ def signInOut(InOrOut):
 
     if not checkbox_found:
         print("[ERR] Unable to find the checkbox in any frame.")
-        # driver.quit()
-        # return
+        driver.quit()
+        print('[INFO] Return code: 300')
+        return 300
 
     if checkbox_found:
         # switch to recaptcha audio control frame
@@ -86,6 +88,7 @@ def signInOut(InOrOut):
 
         # click on audio challenge
         time.sleep(1)
+
         # Iterate through all frames to find the audio challenge button
         audio_button_found = False
         for index, frame in enumerate(frames):
@@ -101,8 +104,9 @@ def signInOut(InOrOut):
 
         if not audio_button_found:
             print("[ERR] Unable to find the audio challenge button in any frame.")
-            # driver.quit()
-            # return
+            driver.quit()
+            print('[INFO] Return code: 300')
+            return 300
 
         if audio_button_found:
             # switch to recaptcha audio challenge frame
@@ -124,11 +128,12 @@ def signInOut(InOrOut):
 
             if not audio_source_found:
                 print("[ERR] Unable to find the audio source in any frame.")
-                print("\nRetrying to close page and login again in one minute...")
+                # print("\nRetrying to close page and login again...")
                 driver.quit()
                 # time.sleep(60)
-                signInOut(InOrOut)
-                return
+                # signInOut(InOrOut)
+                print('[INFO] Return code: 400')
+                return 400
 
             else:
                 path_to_mp3 = os.path.normpath(os.path.join(os.getcwd(), "sample.mp3"))
@@ -143,7 +148,8 @@ def signInOut(InOrOut):
                 except Exception as e:
                     print(f"[ERR] Failed to convert audio file: {e}")
                     driver.quit()
-                    return
+                    print('[INFO] Return code: 400')
+                    return 400
 
                 # translate audio to text with google voice recognition
                 time.sleep(3)
@@ -164,24 +170,21 @@ def signInOut(InOrOut):
                 # key in results and submit
                 if passcode_recognized:
                     time.sleep(3)
-                    # driver.find_element_by_id("audio-response").send_keys(key.lower())
                     driver.find_element(By.ID, 'audio-response').send_keys(key.lower())
-                    # driver.find_element_by_id("audio-response").send_keys(Keys.ENTER)
                     driver.find_element(By.ID, 'audio-response').send_keys(Keys.ENTER)
                     time.sleep(3)
                     driver.switch_to.default_content()
                     time.sleep(3)
-                    # driver.find_element_by_id("recaptcha-demo-submit").click()
-                    # driver.find_element(By.ID, 'recaptcha-demo-submit').click()
-                    # if (tor_process):
-                    #     tor_process.kill()
                 else:
                     print("[ERR] Failed to enter the audio passcode.")
+                    driver.quit()
+                    print('[INFO] Return code: 500')
+                    return 500
 
-    # Press login botton
+    # Press login button
     login_button = driver.find_element(By.CSS_SELECTOR, "button.btn.btn-primary")
     actions.move_to_element(login_button).click().perform()
-    
+
     time.sleep(.5)
 
     if hasOTP:
@@ -201,14 +204,16 @@ def signInOut(InOrOut):
 
     try:
         # Try to enter HumanSys
-        submit_botton = driver.find_element(By.CLASS_NAME, 'btn-primary')
-        actions.move_to_element(submit_botton).click().perform()
+        submit_button = driver.find_element(By.CLASS_NAME, 'btn-primary')
+        actions.move_to_element(submit_button).click().perform()
     except:
         # Potentially malicious website
-        # "Caution! The site you are about to visit is not officially approved, the above system info might also be fraud, the url is: https://cis.ncu.edu.tw/HumanSys/login"
         print('[ERR] Potentially malicious website detected on HumanSys.')
-        submit_botton = driver.find_element(By.CLASS_NAME, 'btn-danger')
-        actions.move_to_element(submit_botton).click().perform()
+        submit_button = driver.find_element(By.CLASS_NAME, 'btn-danger')
+        actions.move_to_element(submit_button).click().perform()
+        driver.quit()
+        print('[INFO] Return code: 200')
+        return 200
 
     time.sleep(.5)
 
@@ -220,8 +225,9 @@ def signInOut(InOrOut):
         alert_message = driver.find_element(By.XPATH, '//*[@id="form1"]/div')
         print(f'[ERR] {alert_message.text}')
         driver.close()
-        return
-    
+        print('[INFO] Return code: 100')
+        return 100
+
     except Exception as e:
         print('[INFO] No alert message detected.')
 
@@ -239,7 +245,7 @@ def signInOut(InOrOut):
 
         signin_button = driver.find_element(By.ID, 'signin')
         signin_button.click()
-    
+
     elif InOrOut == 'signout':
         signout_button = driver.find_element(By.ID, 'signout')
         signout_button.click()
@@ -247,31 +253,43 @@ def signInOut(InOrOut):
     else:
         print('Invalid InOrOut option! Please specify "signin" or "signout".')
         driver.close()
-        return
+        print('[INFO] Return code: 600')
+        return 600
 
     time.sleep(.5)
 
     driver.close()
 
     print(f"'{InOrOut}' action completed successfully.")
+    print('[INFO] Return code: 000')
+    return 000
 
 if __name__ == '__main__':
-    # Initialize argument parser
-    parser = argparse.ArgumentParser()
-    
-    # Add arguments for the script
-    parser.add_argument('--inorout', default="signin", help="Specify 'signin' or 'signout' (default: 'signin')")
-    parser.add_argument('--username', required=True, help="Username for login")
-    parser.add_argument('--password', required=True, help="Password for login")
-    parser.add_argument('--otpauth', required=False, help="OTP authentication URL")
-    
-    # Parse the arguments
-    args = parser.parse_args()
+    # Get inorout from environment, default to "signin"
+    inorout = os.getenv('inorout', 'signin')
 
-    # Set environment variables from parsed arguments
-    os.environ['username'] = args.username
-    os.environ['password'] = args.password
-    os.environ['otpauth'] = args.otpauth or 'None'
+    # Set retry limit
+    retry_limit = 250
 
-    # Call the signInOut function with the specified action
-    signInOut(args.inorout)
+    # Retry until successful
+    for i in range(retry_limit):
+        # Call the signInOut function with the specified action
+        result_code = signInOut(inorout)
+        print(f"Result code: {result_code}")
+
+        if result_code == 000:
+            break
+
+        # time.sleep(60)
+
+    # Send notification to Discord
+    discord_token = os.getenv('discord_token')
+    guild_id = int(os.getenv('discord_guild_id'))
+    channel_id = int(os.getenv('discord_channel_id'))
+
+    if discord_token and guild_id and channel_id:
+        message = f"Successfully signed {inorout} with result code {result_code}!"
+        print(f"[INFO] Sending message to Discord: {message}")
+        nt.dc_send(message, discord_token, guild_id, channel_id)
+    else:
+        print("[WARN] Discord notification not sent. Missing one or more environment variables.")

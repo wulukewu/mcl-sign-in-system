@@ -13,40 +13,124 @@ An auto sign-in/sign-out system for NCU HumanSys.
 
 **Docker Hub**: [wulukewu/mcl-sign-in-system](https://hub.docker.com/r/wulukewu/mcl-sign-in-system)
 
-To automatically run this Docker on GitHub Actions, see this repository: [wulukewu/mcl-sign-in-system-runner](https://github.com/wulukewu/mcl-sign-in-system-runner)
+## Quick Start
+
+Run the container with the following command, replacing `your_username`, `your_password`, and `your_otpauth_url` with your actual credentials:
+
+```bash
+docker run -e username=your_username \
+           -e password=your_password \
+           -e otpauth=your_otpauth_url \
+           -e inorout=signout \
+           -e discord_token=your_discord_token \
+           -e discord_guild_id=your_discord_guild_id \
+           -e discord_channel_id=your_discord_channel_id \
+           wulukewu/mcl-sign-in-system:latest
+```
+To sign in instead of signing out (which is the default), omit the `-e inorout=signout` line.  Also, omit the `-e otpauth=your_otpauth_url` line if you don't use OTP. The Discord parameters are optional; omit them if you don't want Discord notifications.
+
+## Secrets Configuration (GitHub Actions)
+
+If you're using GitHub Actions, add the following secrets under your repository settings:
+
+- `username`: Your Student ID used for login.
+- `password`: Password for your portal login.
+- `otpauth` [optional]: OTP URL to generate a one-time password (OTP) for two-factor authentication.
+- `discord_token` [optional]: Discord bot token to send notifications.
+- `discord_guild_id` [optional]: Discord guild (server) ID where the notification should be sent.
+- `discord_channel_id` [optional]: Discord channel ID where the notification should be sent.
+Remember to adjust the `inorout` value as needed.
 
 ## Parameters
 
-- **`--inorout`**: Specify `"signin"` or `"signout"` for the desired action.
-- **`--username`**: Your Student ID used for login.
-- **`--password`**: Password for your portal login.
-- **`--otpauth`** [optional]: OTP URL to generate a one-time password (OTP) for two-factor authentication.
+The following parameters are configured using environment variables.  These can be set using the `-e` flag when running `docker run` or by defining them in your shell environment.
+
+- **`inorout`**: Specify `"signin"` or `"signout"` for the desired action. Defaults to `"signin"` if not specified.
+- **`username`**: Your Student ID used for login.
+- **`password`**: Password for your portal login.
+- **`otpauth`** [optional]: OTP URL to generate a one-time password (OTP) for two-factor authentication.  If not provided, OTP authentication will be skipped.  Set to `"None"` if you do not use OTP.
+- **`discord_token`** [optional]: Discord bot token to send notifications. If provided, a notification will be sent to the specified channel.
+- **`discord_guild_id`** [optional]: Discord guild (server) ID where the notification should be sent. Required if `discord_token` is provided.
+- **`discord_channel_id`** [optional]: Discord channel ID where the notification should be sent. Required if `discord_token` is provided.
 
 ## Usage
 
-To run the script, use the following command:
+To run the script *directly* (outside of Docker), you must set the required environment variables *before* executing the `python main.py` command. The method for setting environment variables depends on your operating system and shell. Here are a few examples:
 
-```sh
-python main.py --inorout <signin|signout> --username <your_username> --password <your_password> --otpauth <[optional] otpauth_url>
+**Linux/macOS (Bash):**
+
+```bash
+export username=your_username
+export password=your_password
+export otpauth=your_otpauth_url
+export inorout=signout  # Optional, defaults to signin
+export discord_token=your_discord_token # Optional
+export discord_guild_id=your_discord_guild_id # Optional
+export discord_channel_id=your_discord_channel_id # Optional
+python main.py
 ```
 
-## Docker
+**Windows (Command Prompt):**
 
-To build and run the Docker container, use the following commands:
+```cmd
+set username=your_username
+set password=your_password
+set otpauth=your_otpauth_url
+set inorout=signout  # Optional, defaults to signin
+set discord_token=your_discord_token # Optional
+set discord_guild_id=your_discord_guild_id # Optional
+set discord_channel_id=your_discord_channel_id # Optional
+python main.py
+```
+
+**Windows (PowerShell):**
+
+```powershell
+$env:username="your_username"
+$env:password="your_password"
+$env:otpauth="your_otpauth_url"
+$env:inorout="signout" # Optional, defaults to signin
+$env:discord_token="your_discord_token" # Optional
+$env:discord_guild_id="your_discord_guild_id" # Optional
+$env:discord_channel_id="your_discord_channel_id" # Optional
+python main.py
+```
+
+**Important:**  Remember to replace `your_username`, `your_password`, `your_otpauth_url`, `your_discord_token`, `your_discord_guild_id`, and `your_discord_channel_id` with your actual values. The `export` (Linux/macOS) or `set` (Windows) commands set the environment variables for the current shell session.
+
+## Docker
+To build and run the Docker container, use the following commands.  Make sure to replace `your_username`, `your_password`, `your_otpauth_url`, `your_discord_token`, `your_discord_guild_id`, and `your_discord_channel_id` with your actual credentials.
 
 ```sh
 docker build -t mcl-sign-in-system .
-docker run mcl-sign-in-system --inorout <signin|signout> --username <your_username> --password <your_password> --otpauth <[optional] otpauth_url>
+docker run -e username=your_username \
+           -e password=your_password \
+           -e otpauth=your_otpauth_url \
+           -e inorout=signout \
+           -e discord_token=your_discord_token \
+           -e discord_guild_id=your_discord_guild_id \
+           -e discord_channel_id=your_discord_channel_id \
+           mcl-sign-in-system
 ```
+
+If you want to sign in, you can omit the `-e inorout=signout` line, as the default value is `"signin"`. The Discord parameters are optional; omit them if you don't want Discord notifications.
+
+## Return Codes
+
+The script will return the following codes to indicate the outcome of the execution:
+
+- `000`: Successfully completed the sign-in or sign-out action.
+- `100`: Alert message detected, nothing to do.
+- `200`: Potentially malicious website detected.
+- `300`: Failed to solve reCAPTCHA.
+- `400`: Failed to find the audio source for reCAPTCHA.
+- `500`: Failed to enter the audio passcode.
+- `600`: Invalid `inorout` option.
 
 ## References
 
 - [VS Code + Python + Selenium Automation Testing Part 1](https://medium.com/begonia-design/vs-code-python-selenium-%E8%87%AA%E5%8B%95%E5%8C%96%E6%B8%AC%E8%A9%A6-part-1-30d6c0ea92af)
-
 - [Day 15: Dynamic Web Page Scraping 2 - Selenium Data Location Functions](https://ithelp.ithome.com.tw/articles/10300961)
-
 - [【 Python 】利用 .env 與環境變數隱藏敏感資訊](https://learningsky.io/python-use-environmental-variables-to-hide-sensitive-information/)
-
 - [Pull a certain branch from the remote server](https://stackoverflow.com/questions/1709177/pull-a-certain-branch-from-the-remote-server)
-
 - [recaptcha_v2_solver](https://github.com/ohyicong/recaptcha_v2_solver)
