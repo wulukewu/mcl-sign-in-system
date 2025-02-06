@@ -77,6 +77,7 @@ def signInOut(InOrOut):
     if not checkbox_found:
         print("[ERR] Unable to find the checkbox in any frame.")
         driver.quit()
+        print('[INFO] Return code: 300')
         return 300
 
     if checkbox_found:
@@ -104,6 +105,7 @@ def signInOut(InOrOut):
         if not audio_button_found:
             print("[ERR] Unable to find the audio challenge button in any frame.")
             driver.quit()
+            print('[INFO] Return code: 300')
             return 300
 
         if audio_button_found:
@@ -130,6 +132,7 @@ def signInOut(InOrOut):
                 driver.quit()
                 # time.sleep(60)
                 # signInOut(InOrOut)
+                print('[INFO] Return code: 400')
                 return 400
 
             else:
@@ -145,6 +148,7 @@ def signInOut(InOrOut):
                 except Exception as e:
                     print(f"[ERR] Failed to convert audio file: {e}")
                     driver.quit()
+                    print('[INFO] Return code: 400')
                     return 400
 
                 # translate audio to text with google voice recognition
@@ -174,6 +178,7 @@ def signInOut(InOrOut):
                 else:
                     print("[ERR] Failed to enter the audio passcode.")
                     driver.quit()
+                    print('[INFO] Return code: 500')
                     return 500
 
     # Press login button
@@ -207,6 +212,7 @@ def signInOut(InOrOut):
         submit_button = driver.find_element(By.CLASS_NAME, 'btn-danger')
         actions.move_to_element(submit_button).click().perform()
         driver.quit()
+        print('[INFO] Return code: 200')
         return 200
 
     time.sleep(.5)
@@ -219,6 +225,7 @@ def signInOut(InOrOut):
         alert_message = driver.find_element(By.XPATH, '//*[@id="form1"]/div')
         print(f'[ERR] {alert_message.text}')
         driver.close()
+        print('[INFO] Return code: 100')
         return 100
 
     except Exception as e:
@@ -246,6 +253,7 @@ def signInOut(InOrOut):
     else:
         print('Invalid InOrOut option! Please specify "signin" or "signout".')
         driver.close()
+        print('[INFO] Return code: 600')
         return 600
 
     time.sleep(.5)
@@ -253,6 +261,7 @@ def signInOut(InOrOut):
     driver.close()
 
     print(f"'{InOrOut}' action completed successfully.")
+    print('[INFO] Return code: 000')
     return 000
 
 if __name__ == '__main__':
