@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.0](https://github.com/wulukewu/mcl-sign-in-system/compare/v1.2.0...v1.3.0) (2025-02-06)
+
+
+### Features
+
+* add runner on github actions ([54c4655](https://github.com/wulukewu/mcl-sign-in-system/commit/54c4655a2ebdf2c7f1e32516c4923ae282d5d83f))
+
 ## [1.2.0](https://github.com/wulukewu/mcl-sign-in-system/compare/v1.1.0...v1.2.0) (2025-02-05)
 
 
