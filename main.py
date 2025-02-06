@@ -9,6 +9,8 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.keys import Keys
 
+import notification as nt
+
 load_dotenv()
 
 def signInOut(InOrOut):
@@ -74,8 +76,8 @@ def signInOut(InOrOut):
 
     if not checkbox_found:
         print("[ERR] Unable to find the checkbox in any frame.")
-        # driver.quit()
-        # return
+        driver.quit()
+        return 300
 
     if checkbox_found:
         # switch to recaptcha audio control frame
@@ -101,8 +103,8 @@ def signInOut(InOrOut):
 
         if not audio_button_found:
             print("[ERR] Unable to find the audio challenge button in any frame.")
-            # driver.quit()
-            # return
+            driver.quit()
+            return 300
 
         if audio_button_found:
             # switch to recaptcha audio challenge frame
@@ -128,7 +130,7 @@ def signInOut(InOrOut):
                 driver.quit()
                 # time.sleep(60)
                 signInOut(InOrOut)
-                return
+                return 400
 
             else:
                 path_to_mp3 = os.path.normpath(os.path.join(os.getcwd(), "sample.mp3"))
@@ -143,7 +145,7 @@ def signInOut(InOrOut):
                 except Exception as e:
                     print(f"[ERR] Failed to convert audio file: {e}")
                     driver.quit()
-                    return
+                    return 400
 
                 # translate audio to text with google voice recognition
                 time.sleep(3)
@@ -164,21 +166,17 @@ def signInOut(InOrOut):
                 # key in results and submit
                 if passcode_recognized:
                     time.sleep(3)
-                    # driver.find_element_by_id("audio-response").send_keys(key.lower())
                     driver.find_element(By.ID, 'audio-response').send_keys(key.lower())
-                    # driver.find_element_by_id("audio-response").send_keys(Keys.ENTER)
                     driver.find_element(By.ID, 'audio-response').send_keys(Keys.ENTER)
                     time.sleep(3)
                     driver.switch_to.default_content()
                     time.sleep(3)
-                    # driver.find_element_by_id("recaptcha-demo-submit").click()
-                    # driver.find_element(By.ID, 'recaptcha-demo-submit').click()
-                    # if (tor_process):
-                    #     tor_process.kill()
                 else:
                     print("[ERR] Failed to enter the audio passcode.")
+                    driver.quit()
+                    return 500
 
-    # Press login botton
+    # Press login button
     login_button = driver.find_element(By.CSS_SELECTOR, "button.btn.btn-primary")
     actions.move_to_element(login_button).click().perform()
 
@@ -201,14 +199,15 @@ def signInOut(InOrOut):
 
     try:
         # Try to enter HumanSys
-        submit_botton = driver.find_element(By.CLASS_NAME, 'btn-primary')
-        actions.move_to_element(submit_botton).click().perform()
+        submit_button = driver.find_element(By.CLASS_NAME, 'btn-primary')
+        actions.move_to_element(submit_button).click().perform()
     except:
         # Potentially malicious website
-        # "Caution! The site you are about to visit is not officially approved, the above system info might also be fraud, the url is: https://cis.ncu.edu.tw/HumanSys/login"
         print('[ERR] Potentially malicious website detected on HumanSys.')
-        submit_botton = driver.find_element(By.CLASS_NAME, 'btn-danger')
-        actions.move_to_element(submit_botton).click().perform()
+        submit_button = driver.find_element(By.CLASS_NAME, 'btn-danger')
+        actions.move_to_element(submit_button).click().perform()
+        driver.quit()
+        return 200
 
     time.sleep(.5)
 
@@ -220,7 +219,7 @@ def signInOut(InOrOut):
         alert_message = driver.find_element(By.XPATH, '//*[@id="form1"]/div')
         print(f'[ERR] {alert_message.text}')
         driver.close()
-        return
+        return 100
 
     except Exception as e:
         print('[INFO] No alert message detected.')
@@ -247,17 +246,31 @@ def signInOut(InOrOut):
     else:
         print('Invalid InOrOut option! Please specify "signin" or "signout".')
         driver.close()
-        return
+        return 600
 
     time.sleep(.5)
 
     driver.close()
 
     print(f"'{InOrOut}' action completed successfully.")
+    return 000
 
 if __name__ == '__main__':
     # Get inorout from environment, default to "signin"
     inorout = os.getenv('inorout', 'signin')
 
     # Call the signInOut function with the specified action
-    signInOut(inorout)
+    result_code = signInOut(inorout)
+    print(f"Result code: {result_code}")
+
+    # Send notification to Discord
+    discord_token = os.getenv('discord_token')
+    guild_id = int(os.getenv('discord_guild_id'))
+    channel_id = int(os.getenv('discord_channel_id'))
+
+    if discord_token and guild_id and channel_id:
+        message = f"Successfully signed {inorout} with result code {result_code}!"
+        print(f"[INFO] Sending message to Discord: {message}")
+        nt.dc_send(message, discord_token, guild_id, channel_id)
+    else:
+        print("[WARN] Discord notification not sent. Missing one or more environment variables.")

@@ -1,4 +1,5 @@
 argparse
+discord
 ffmpeg-python
 pyotp
 python-dotenv
