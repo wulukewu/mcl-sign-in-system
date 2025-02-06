@@ -3,7 +3,6 @@ import time
 import ffmpeg
 import urllib
 import speech_recognition as sr
-from dotenv import load_dotenv
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.action_chains import ActionChains
@@ -11,6 +10,7 @@ from selenium.webdriver.common.keys import Keys
 
 import notification as nt
 
+# from dotenv import load_dotenv
 # load_dotenv()
 
 def signInOut(InOrOut):
