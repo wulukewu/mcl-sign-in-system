@@ -22,10 +22,12 @@ docker run -e username=your_username \
            -e password=your_password \
            -e otpauth=your_otpauth_url \
            -e inorout=signout \
+           -e discord_token=your_discord_token \
+           -e discord_guild_id=your_discord_guild_id \
+           -e discord_channel_id=your_discord_channel_id \
            wulukewu/mcl-sign-in-system:latest
 ```
-
-To sign in instead of signing out (which is the default), omit the `-e inorout=signout` line.  Also, omit the `-e otpauth=your_otpauth_url` line if you don't use OTP.
+To sign in instead of signing out (which is the default), omit the `-e inorout=signout` line.  Also, omit the `-e otpauth=your_otpauth_url` line if you don't use OTP. The Discord parameters are optional; omit them if you don't want Discord notifications.
 
 ## Secrets Configuration (GitHub Actions)
 
@@ -34,7 +36,9 @@ If you're using GitHub Actions, add the following secrets under your repository 
 - `username`: Your Student ID used for login.
 - `password`: Password for your portal login.
 - `otpauth` [optional]: OTP URL to generate a one-time password (OTP) for two-factor authentication.
-
+- `discord_token` [optional]: Discord bot token to send notifications.
+- `discord_guild_id` [optional]: Discord guild (server) ID where the notification should be sent.
+- `discord_channel_id` [optional]: Discord channel ID where the notification should be sent.
 Remember to adjust the `inorout` value as needed.
 
 ## Parameters
@@ -45,6 +49,9 @@ The following parameters are configured using environment variables.  These can 
 - **`username`**: Your Student ID used for login.
 - **`password`**: Password for your portal login.
 - **`otpauth`** [optional]: OTP URL to generate a one-time password (OTP) for two-factor authentication.  If not provided, OTP authentication will be skipped.  Set to `"None"` if you do not use OTP.
+- **`discord_token`** [optional]: Discord bot token to send notifications. If provided, a notification will be sent to the specified channel.
+- **`discord_guild_id`** [optional]: Discord guild (server) ID where the notification should be sent. Required if `discord_token` is provided.
+- **`discord_channel_id`** [optional]: Discord channel ID where the notification should be sent. Required if `discord_token` is provided.
 
 ## Usage
 
@@ -57,6 +64,9 @@ export username=your_username
 export password=your_password
 export otpauth=your_otpauth_url
 export inorout=signout  # Optional, defaults to signin
+export discord_token=your_discord_token # Optional
+export discord_guild_id=your_discord_guild_id # Optional
+export discord_channel_id=your_discord_channel_id # Optional
 python main.py
 ```
 
@@ -67,6 +77,9 @@ set username=your_username
 set password=your_password
 set otpauth=your_otpauth_url
 set inorout=signout  # Optional, defaults to signin
+set discord_token=your_discord_token # Optional
+set discord_guild_id=your_discord_guild_id # Optional
+set discord_channel_id=your_discord_channel_id # Optional
 python main.py
 ```
 
@@ -77,14 +90,16 @@ $env:username="your_username"
 $env:password="your_password"
 $env:otpauth="your_otpauth_url"
 $env:inorout="signout" # Optional, defaults to signin
+$env:discord_token="your_discord_token" # Optional
+$env:discord_guild_id="your_discord_guild_id" # Optional
+$env:discord_channel_id="your_discord_channel_id" # Optional
 python main.py
 ```
 
-**Important:**  Remember to replace `your_username`, `your_password`, and `your_otpauth_url` with your actual values. The `export` (Linux/macOS) or `set` (Windows) commands set the environment variables for the current shell session.
+**Important:**  Remember to replace `your_username`, `your_password`, `your_otpauth_url`, `your_discord_token`, `your_discord_guild_id`, and `your_discord_channel_id` with your actual values. The `export` (Linux/macOS) or `set` (Windows) commands set the environment variables for the current shell session.
 
 ## Docker
-
-To build and run the Docker container, use the following commands.  Make sure to replace `your_username`, `your_password`, and `your_otpauth_url` with your actual credentials.
+To build and run the Docker container, use the following commands.  Make sure to replace `your_username`, `your_password`, `your_otpauth_url`, `your_discord_token`, `your_discord_guild_id`, and `your_discord_channel_id` with your actual credentials.
 
 ```sh
 docker build -t mcl-sign-in-system .
@@ -92,10 +107,13 @@ docker run -e username=your_username \
            -e password=your_password \
            -e otpauth=your_otpauth_url \
            -e inorout=signout \
+           -e discord_token=your_discord_token \
+           -e discord_guild_id=your_discord_guild_id \
+           -e discord_channel_id=your_discord_channel_id \
            mcl-sign-in-system
 ```
 
-If you want to sign in, you can omit the `-e inorout=signout` line, as the default value is `"signin"`.
+If you want to sign in, you can omit the `-e inorout=signout` line, as the default value is `"signin"`. The Discord parameters are optional; omit them if you don't want Discord notifications.
 
 ## Return Codes
 
