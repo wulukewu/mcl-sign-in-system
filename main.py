@@ -126,10 +126,10 @@ def signInOut(InOrOut):
 
             if not audio_source_found:
                 print("[ERR] Unable to find the audio source in any frame.")
-                print("\nRetrying to close page and login again in one minute...")
+                # print("\nRetrying to close page and login again...")
                 driver.quit()
                 # time.sleep(60)
-                signInOut(InOrOut)
+                # signInOut(InOrOut)
                 return 400
 
             else:
@@ -259,9 +259,19 @@ if __name__ == '__main__':
     # Get inorout from environment, default to "signin"
     inorout = os.getenv('inorout', 'signin')
 
-    # Call the signInOut function with the specified action
-    result_code = signInOut(inorout)
-    print(f"Result code: {result_code}")
+    # Set retry limit
+    retry_limit = 250
+
+    # Retry until successful
+    for i in range(retry_limit):
+        # Call the signInOut function with the specified action
+        result_code = signInOut(inorout)
+        print(f"Result code: {result_code}")
+
+        if result_code == 000:
+            break
+
+        # time.sleep(60)
 
     # Send notification to Discord
     discord_token = os.getenv('discord_token')
