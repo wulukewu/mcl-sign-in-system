@@ -97,6 +97,18 @@ docker run -e username=your_username \
 
 If you want to sign in, you can omit the `-e inorout=signout` line, as the default value is `"signin"`.
 
+## Return Codes
+
+The script will return the following codes to indicate the outcome of the execution:
+
+- `000`: Successfully completed the sign-in or sign-out action.
+- `100`: Alert message detected, nothing to do.
+- `200`: Potentially malicious website detected.
+- `300`: Failed to solve reCAPTCHA.
+- `400`: Failed to find the audio source for reCAPTCHA.
+- `500`: Failed to enter the audio passcode.
+- `600`: Invalid `inorout` option.
+
 ## References
 
 - [VS Code + Python + Selenium Automation Testing Part 1](https://medium.com/begonia-design/vs-code-python-selenium-%E8%87%AA%E5%8B%95%E5%8C%96%E6%B8%AC%E8%A9%A6-part-1-30d6c0ea92af)
