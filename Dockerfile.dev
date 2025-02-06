@@ -45,6 +45,9 @@ COPY --from=builder $VIRTUAL_ENV $VIRTUAL_ENV
 # Set the working directory
 WORKDIR /app
 
+# Copy the current directory contents into the container at /app
+COPY . /app
+
 # Set environment variables
 ENV DISPLAY=:99
 
