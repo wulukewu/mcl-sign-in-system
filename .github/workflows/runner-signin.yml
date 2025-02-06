@@ -28,11 +28,12 @@ jobs:
         discord_guild_id="${{ secrets.discord_guild_id }}"
         discord_channel_id="${{ secrets.discord_channel_id }}"
         
-        docker run wulukewu/mcl-sign-in-system:dev\
-          --inorout signin \
+        docker run \
+          -e inorout=signin \
           -e username="$username" \
           -e password="$password" \
           -e otpauth="$otpauth" \
-          -e discord_token="$discord_token"
-          -e discord_guild_id="$discord_guild_id"
-          -e discord_channel_id="$discord_channel_id"
+          -e discord_token="$discord_token" \
+          -e discord_guild_id="$discord_guild_id" \
+          -e discord_channel_id="$discord_channel_id" \
+          wulukewu/mcl-sign-in-system:latest
