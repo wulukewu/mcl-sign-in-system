@@ -28,7 +28,7 @@ jobs:
         discord_guild_id="${{ secrets.discord_guild_id }}"
         discord_channel_id="${{ secrets.discord_channel_id }}"
         
-        docker run -it --rm \
+        docker run \
           -e inorout=signin \
           -e username="$username" \
           -e password="$password" \
