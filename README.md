@@ -48,17 +48,39 @@ The following parameters are configured using environment variables.  These can 
 
 ## Usage
 
-To run the script, set the required environment variables and execute:
+To run the script *directly* (outside of Docker), you must set the required environment variables *before* executing the `python main.py` command. The method for setting environment variables depends on your operating system and shell. Here are a few examples:
 
-```sh
+**Linux/macOS (Bash):**
+
+```bash
+export username=your_username
+export password=your_password
+export otpauth=your_otpauth_url
+export inorout=signout  # Optional, defaults to signin
 python main.py
 ```
 
-You can optionally specify the `inorout` parameter by setting the `inorout` environment variable:
+**Windows (Command Prompt):**
 
-```sh
-inorout=signout python main.py
+```cmd
+set username=your_username
+set password=your_password
+set otpauth=your_otpauth_url
+set inorout=signout  # Optional, defaults to signin
+python main.py
 ```
+
+**Windows (PowerShell):**
+
+```powershell
+$env:username="your_username"
+$env:password="your_password"
+$env:otpauth="your_otpauth_url"
+$env:inorout="signout" # Optional, defaults to signin
+python main.py
+```
+
+**Important:**  Remember to replace `your_username`, `your_password`, and `your_otpauth_url` with your actual values. The `export` (Linux/macOS) or `set` (Windows) commands set the environment variables for the current shell session.
 
 ## Docker
 
