@@ -11,7 +11,7 @@ from selenium.webdriver.common.keys import Keys
 
 import notification as nt
 
-load_dotenv()
+# load_dotenv()
 
 def signInOut(InOrOut):
     # Load environ variables
