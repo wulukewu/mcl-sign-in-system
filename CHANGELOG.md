@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.2](https://github.com/wulukewu/mcl-sign-in-system/compare/v1.5.1...v1.5.2) (2025-02-07)
+
+
+### Bug Fixes
+
+* add multiple symbol in result codes ([63ee01f](https://github.com/wulukewu/mcl-sign-in-system/commit/63ee01feb341d05b0b0db7b7cb504e89c90a20c7))
+
 ## [1.5.1](https://github.com/wulukewu/mcl-sign-in-system/compare/v1.5.0...v1.5.1) (2025-02-07)
 
 
