@@ -271,11 +271,20 @@ if __name__ == '__main__':
     # Set retry limit
     retry_limit = 250
 
+    result_code_type = []
+    result_code_type_count = {}
+
     # Retry until successful
     for i in range(retry_limit):
         # Call the signInOut function with the specified action
         result_code = signInOut(inorout)
         print(f"Result code: {result_code}")
+
+        if result_code in result_code_type:
+            result_code_type_count[result_code] += 1
+        else:
+            result_code_type.append(result_code)
+            result_code_type_count[result_code] = 1
 
         if result_code == 000:
             break
@@ -288,8 +297,15 @@ if __name__ == '__main__':
     channel_id = int(os.getenv('discord_channel_id'))
 
     if discord_token and guild_id and channel_id:
-        message = f"Successfully signed {inorout} with result code {result_code}!"
+        if result_code == 000:
+            message = f"Successfully signed {inorout}!"
+        elif len(result_code_type) == 1:
+            message = f"Failed to sign {inorout} with result code {result_code}."
+        else:
+            result_code_type.sort()
+            message = f"Failed to sign {inorout} with multiple result codes: \n{'. '.join(f'{code} ({result_code_type_count[code]})' for code in result_code_type)}."
         print(f"[INFO] Sending message to Discord: {message}")
         nt.dc_send(message, discord_token, guild_id, channel_id)
+
     else:
         print("[WARN] Discord notification not sent. Missing one or more environment variables.")
