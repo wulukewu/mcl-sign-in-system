@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.1](https://github.com/wulukewu/mcl-sign-in-system/compare/v1.5.0...v1.5.1) (2025-02-07)
+
+
+### Bug Fixes
+
+* determine result_code to push on discord ([0c7f574](https://github.com/wulukewu/mcl-sign-in-system/commit/0c7f57435caef3e76178d8fe2c61f2b822b70adc))
+
 ## [1.5.0](https://github.com/wulukewu/mcl-sign-in-system/compare/v1.4.0...v1.5.0) (2025-02-06)
 
 
