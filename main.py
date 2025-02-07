@@ -303,7 +303,7 @@ if __name__ == '__main__':
             message = f"Failed to sign {inorout} with result code {result_code}."
         else:
             result_code_type.sort()
-            message = f"Failed to sign {inorout} with multiple result codes: \n{'. '.join(f'{code} ({result_code_type_count[code]})' for code in result_code_type)}."
+            message = f"Failed to sign {inorout} with multiple result codes: \n{'. '.join(f'{code} (*{result_code_type_count[code]})' for code in result_code_type)}."
         print(f"[INFO] Sending message to Discord: {message}")
         nt.dc_send(message, discord_token, guild_id, channel_id)
 
