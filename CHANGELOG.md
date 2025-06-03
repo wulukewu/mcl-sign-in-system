@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.3](https://github.com/wulukewu/mcl-sign-in-system/compare/v1.5.2...v1.5.3) (2025-06-03)
+
+
+### Bug Fixes
+
+* login invalid ([#13](https://github.com/wulukewu/mcl-sign-in-system/issues/13)) ([66d7c7c](https://github.com/wulukewu/mcl-sign-in-system/commit/66d7c7caec5eb44724dfe928698eddc8b1c76da0))
+
 ## [1.5.2](https://github.com/wulukewu/mcl-sign-in-system/compare/v1.5.1...v1.5.2) (2025-02-07)
 
 
