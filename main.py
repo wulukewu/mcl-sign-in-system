@@ -75,10 +75,11 @@ def signInOut(InOrOut):
             driver.switch_to.default_content()
 
     if not checkbox_found:
-        print("[ERR] Unable to find the checkbox in any frame.")
-        driver.quit()
-        print('[INFO] Return code: 300')
-        return 300
+        print('[INFO] No checkbox found')
+        # print("[ERR] Unable to find the checkbox in any frame.")
+        # driver.quit()
+        # print('[INFO] Return code: 300')
+        # return 300
 
     if checkbox_found:
         # switch to recaptcha audio control frame
@@ -269,7 +270,7 @@ if __name__ == '__main__':
     inorout = os.getenv('inorout', 'signin')
 
     # Set retry limit
-    retry_limit = 250
+    retry_limit = 5
 
     result_code_type = []
     result_code_type_count = {}
