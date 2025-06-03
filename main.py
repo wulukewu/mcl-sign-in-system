@@ -75,10 +75,11 @@ def signInOut(InOrOut):
             driver.switch_to.default_content()
 
     if not checkbox_found:
-        print("[ERR] Unable to find the checkbox in any frame.")
-        driver.quit()
-        print('[INFO] Return code: 300')
-        return 300
+        print('[INFO] No checkbox found')
+        # print("[ERR] Unable to find the checkbox in any frame.")
+        # driver.quit()
+        # print('[INFO] Return code: 300')
+        # return 300
 
     if checkbox_found:
         # switch to recaptcha audio control frame
@@ -237,6 +238,8 @@ def signInOut(InOrOut):
 
     time.sleep(.5)
 
+    button_clicked = False
+
     if InOrOut == 'signin':
         workContent = driver.find_element(By.ID, 'AttendWork')
         workContent.click()
@@ -245,13 +248,44 @@ def signInOut(InOrOut):
 
         signin_button = driver.find_element(By.ID, 'signin')
         signin_button.click()
+        button_clicked = True
 
     elif InOrOut == 'signout':
         signout_button = driver.find_element(By.ID, 'signout')
         signout_button.click()
+        button_clicked = True
 
-    else:
-        print('Invalid InOrOut option! Please specify "signin" or "signout".')
+    elif InOrOut is None:
+        print('[INFO] No InOrOut option specified. ')
+
+        if not button_clicked:
+            try:
+                signout_button = driver.find_element(By.ID, 'signout')
+                signout_button.click()
+
+                print('[INFO] Sign-out button clicked.')
+                button_clicked = True
+                InOrOut = 'signout'
+            except: pass
+
+        if not button_clicked:
+            try:
+                signin_button = driver.find_element(By.ID, 'signin')
+                workContent = driver.find_element(By.ID, 'AttendWork')
+                workContent.click()
+                workContent.send_keys('MCL工讀')
+                time.sleep(.5)
+
+                signin_button = driver.find_element(By.ID, 'signin')
+                signin_button.click()
+
+                print('[INFO] Sign-in button clicked.')
+                button_clicked = True
+                InOrOut = 'signin'
+            except: pass
+
+    if not button_clicked:
+        print('[ERR] No button clicked.')
         driver.close()
         print('[INFO] Return code: 600')
         return 600
@@ -266,10 +300,10 @@ def signInOut(InOrOut):
 
 if __name__ == '__main__':
     # Get inorout from environment, default to "signin"
-    inorout = os.getenv('inorout', 'signin')
+    inorout = os.getenv('inorout', None)
 
     # Set retry limit
-    retry_limit = 250
+    retry_limit = 5
 
     result_code_type = []
     result_code_type_count = {}
@@ -293,8 +327,12 @@ if __name__ == '__main__':
 
     # Send notification to Discord
     discord_token = os.getenv('discord_token')
-    guild_id = int(os.getenv('discord_guild_id'))
-    channel_id = int(os.getenv('discord_channel_id'))
+    guild_id = os.getenv('discord_guild_id')
+    channel_id = os.getenv('discord_channel_id')
+    if guild_id:
+        guild_id = int(guild_id)
+    if channel_id:
+        channel_id = int(channel_id)
 
     if discord_token and guild_id and channel_id:
         if result_code == 000:
