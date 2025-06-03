@@ -57,6 +57,25 @@ The following parameters are configured using environment variables. These can b
 - **`discord_guild_id`** [optional]: Discord guild (server) ID where the notification should be sent. Required if `discord_token` is provided.
 - **`discord_channel_id`** [optional]: Discord channel ID where the notification should be sent. Required if `discord_token` is provided.
 
+## How to Get Cookies from Chrome
+
+<details>
+    <summary>Click to expand for instructions</summary>
+
+To obtain your cookies from Chrome, follow these steps:
+
+1. Open Chrome and log in to the NCU HumanSys portal.
+2. Right-click anywhere on the page and select **Inspect** to open Developer Tools.
+3. Go to the **Network** tab.
+4. Refresh the page if needed, then click on any request (such as the first entry).
+5. In the right panel, select the **Headers** tab.
+6. Scroll down to the **Request Headers** section and find the **Cookie** field.
+7. Copy the entire value of the **Cookie** header (e.g., `key1=value1; key2=value2; ...`).
+
+![How to get cookies from Chrome](docs/cookies_chrome.png)
+
+</details>
+
 ## Usage
 
 To run the script _directly_ (outside of Docker), you must set the required environment variables _before_ executing the `python main.py` command. The method for setting environment variables depends on your operating system and shell. Here are a few examples:
