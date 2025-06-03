@@ -14,17 +14,29 @@ import notification as nt
 # load_dotenv()
 
 def signInOut(InOrOut):
-    # Load environ variables
+    # Load account info variables
     username = os.getenv('username')
     password = os.getenv('password')
 
     # Check for OTP availability
-    otpauth_url = os.getenv('otpauth')
-    hasOTP = True
+    otpauth_url = os.getenv('otpauth', None)
 
-    if otpauth_url == 'None' or otpauth_url is None:
+    if otpauth_url:
+        hasOTP = True
+    else:
         hasOTP = False
-        print('otpauth_url not detected')
+        print('[INFO] otpauth_url not detected')
+
+    cookie_input = os.getenv('cookies', None)
+    if cookie_input:
+        cookies = [
+            {"name": kv.split("=", 1)[0].strip(), "value": kv.split("=", 1)[1].strip()}
+            for kv in cookie_input.split("; ")
+        ]
+        print(f"[INFO] Loaded {len(cookies)} cookies")
+    else:
+        cookies = None
+        print('[INFO] No cookies loaded')
 
     # Set up ChromeDriver
     options = webdriver.ChromeOptions()
@@ -35,183 +47,230 @@ def signInOut(InOrOut):
     options.add_argument('--window-size=1920x1080')
 
     driver = webdriver.Chrome(options=options)
+    actions = ActionChains(driver)
 
     # Login Portal
     driver.get('https://portal.ncu.edu.tw/login')
     time.sleep(.5)
 
-    inputAccount = driver.find_element(By.ID, 'inputAccount')
-    inputAccount.click()
-    inputAccount.send_keys(username)
+    # Add cookies to the driver
+    if cookies:
+        for cookie in cookies:
+            driver.add_cookie(cookie)
+        print(f"[INFO] Added {len(cookies)} cookies to the driver")
+        driver.refresh()
+        time.sleep(.5)
 
-    time.sleep(.5)
+    # Login to portal
+    logged_in = False
 
-    inputPassword = driver.find_element(By.ID, 'inputPassword')
-    inputPassword.click()
-    inputPassword.send_keys(password)
-    # inputPassword.submit()
+    # Check if already logged in (if the home tab is present)
+    try:
+        home_tab = driver.find_element(By.ID, 'tab-home')
+        logged_in = True
+        print('[INFO] Already logged in. (Home tab found)')
+    except:
+        pass
 
-    time.sleep(.5)
-
-    # Solve reCAPTCHA
-    actions = ActionChains(driver)
-
-    # switch to recaptcha frame
-    time.sleep(1)
-    frames = driver.find_elements(By.TAG_NAME, 'iframe')
-
-    # Iterate through all frames to find the checkbox to activate recaptcha
-    checkbox_found = False
-    for index, frame in enumerate(frames):
-        driver.switch_to.frame(frame)
+    # If not logged in, try to login
+    if not logged_in:
         try:
-            checkbox = driver.find_element(By.CLASS_NAME, 'recaptcha-checkbox-border')
-            checkbox.click()
-            print(f"[INFO] Found and clicked checkbox in frame {index}")
-            checkbox_found = True
-            break
-        except Exception as e:
-            print(f"[DEBUG] Frame {index} does not contain the checkbox: {e}")
-            driver.switch_to.default_content()
+            login_to_portal_button = driver.find_element(By.XPATH, '//*[@id="submit"]')
+            login_to_portal_button.click()
+            logged_in = True
+            print('[INFO] Successfully logged in via cookies.')
+            time.sleep(.5)
+        except:
+            pass
+    
+    # If not logged in, enter account and password
+    if not logged_in:
+        inputAccount = driver.find_element(By.ID, 'inputAccount')
+        inputAccount.click()
+        inputAccount.send_keys(username)
 
-    if not checkbox_found:
-        print('[INFO] No checkbox found')
-        # print("[ERR] Unable to find the checkbox in any frame.")
-        # driver.quit()
-        # print('[INFO] Return code: 300')
-        # return 300
+        time.sleep(.5)
 
-    if checkbox_found:
-        # switch to recaptcha audio control frame
+        inputPassword = driver.find_element(By.ID, 'inputPassword')
+        inputPassword.click()
+        inputPassword.send_keys(password)
+        # inputPassword.submit()
+
+        time.sleep(.5)
+
+        # Solve reCAPTCHA
+        actions = ActionChains(driver)
+
+        # switch to recaptcha frame
         time.sleep(1)
-        driver.switch_to.default_content()
         frames = driver.find_elements(By.TAG_NAME, 'iframe')
 
-        # click on audio challenge
-        time.sleep(1)
-
-        # Iterate through all frames to find the audio challenge button
-        audio_button_found = False
+        # Iterate through all frames to find the checkbox to activate recaptcha
+        checkbox_found = False
         for index, frame in enumerate(frames):
             driver.switch_to.frame(frame)
             try:
-                audio_button = driver.find_element(By.ID, 'recaptcha-audio-button')
-                audio_button.click()
-                print(f"[INFO] Found and clicked audio button in frame {index}")
-                audio_button_found = True
+                checkbox = driver.find_element(By.CLASS_NAME, 'recaptcha-checkbox-border')
+                checkbox.click()
+                print(f"[INFO] Found and clicked checkbox in frame {index}")
+                checkbox_found = True
                 break
-            except:
+            except Exception as e:
+                print(f"[DEBUG] Frame {index} does not contain the checkbox: {e}")
                 driver.switch_to.default_content()
 
-        if not audio_button_found:
-            print("[ERR] Unable to find the audio challenge button in any frame.")
-            driver.quit()
-            print('[INFO] Return code: 300')
-            return 300
+        if not checkbox_found:
+            print('[INFO] No checkbox found')
+            # print("[ERR] Unable to find the checkbox in any frame.")
+            # driver.quit()
+            # print('[INFO] Return code: 300')
+            # return 300
 
-        if audio_button_found:
-            # switch to recaptcha audio challenge frame
+        if checkbox_found:
+            # switch to recaptcha audio control frame
             time.sleep(1)
             driver.switch_to.default_content()
             frames = driver.find_elements(By.TAG_NAME, 'iframe')
 
-            # Iterate through all frames to find the audio source
-            audio_source_found = False
+            # click on audio challenge
+            time.sleep(1)
+
+            # Iterate through all frames to find the audio challenge button
+            audio_button_found = False
             for index, frame in enumerate(frames):
                 driver.switch_to.frame(frame)
                 try:
-                    src = driver.find_element(By.ID, 'audio-source').get_attribute('src')
-                    print(f"[INFO] Audio src found in frame {index}: {src}")
-                    audio_source_found = True
+                    audio_button = driver.find_element(By.ID, 'recaptcha-audio-button')
+                    audio_button.click()
+                    print(f"[INFO] Found and clicked audio button in frame {index}")
+                    audio_button_found = True
                     break
                 except:
                     driver.switch_to.default_content()
 
-            if not audio_source_found:
-                print("[ERR] Unable to find the audio source in any frame.")
-                # print("\nRetrying to close page and login again...")
+            if not audio_button_found:
+                print("[ERR] Unable to find the audio challenge button in any frame.")
                 driver.quit()
-                # time.sleep(60)
-                # signInOut(InOrOut)
-                print('[INFO] Return code: 400')
-                return 400
+                print('[INFO] Return code: 300')
+                return 300
 
-            else:
-                path_to_mp3 = os.path.normpath(os.path.join(os.getcwd(), "sample.mp3"))
-                path_to_wav = os.path.normpath(os.path.join(os.getcwd(), "sample.wav"))
+            if audio_button_found:
+                # switch to recaptcha audio challenge frame
+                time.sleep(1)
+                driver.switch_to.default_content()
+                frames = driver.find_elements(By.TAG_NAME, 'iframe')
 
-                # download the mp3 audio file from the source
-                urllib.request.urlretrieve(src, path_to_mp3)
+                # Iterate through all frames to find the audio source
+                audio_source_found = False
+                for index, frame in enumerate(frames):
+                    driver.switch_to.frame(frame)
+                    try:
+                        src = driver.find_element(By.ID, 'audio-source').get_attribute('src')
+                        print(f"[INFO] Audio src found in frame {index}: {src}")
+                        audio_source_found = True
+                        break
+                    except:
+                        driver.switch_to.default_content()
 
-                # Load downloaded mp3 audio file as .wav using ffmpeg
-                try:
-                    ffmpeg.input(path_to_mp3).output(path_to_wav).run()
-                except Exception as e:
-                    print(f"[ERR] Failed to convert audio file: {e}")
+                if not audio_source_found:
+                    print("[ERR] Unable to find the audio source in any frame.")
+                    # print("\nRetrying to close page and login again...")
                     driver.quit()
+                    # time.sleep(60)
+                    # signInOut(InOrOut)
                     print('[INFO] Return code: 400')
                     return 400
 
-                # translate audio to text with google voice recognition
-                time.sleep(3)
-                r = sr.Recognizer()
-
-                passcode_recognized = False
-                with sr.AudioFile(path_to_wav) as source:
-                    audio_file = r.record(source)
-                    try:
-                        key = r.recognize_google(audio_file, language='en-US', show_all=True)['alternative'][0]['transcript']
-                        passcode_recognized = True
-                        print(f"[INFO] Recaptcha Passcode: {key}")
-                    except sr.UnknownValueError:
-                        print("[ERR] Google Speech Recognition could not understand the audio")
-                    except sr.RequestError as e:
-                        print(f"[ERR] Could not request results from Google Speech Recognition service; {e}")
-
-                # key in results and submit
-                if passcode_recognized:
-                    time.sleep(3)
-                    driver.find_element(By.ID, 'audio-response').send_keys(key.lower())
-                    driver.find_element(By.ID, 'audio-response').send_keys(Keys.ENTER)
-                    time.sleep(3)
-                    driver.switch_to.default_content()
-                    time.sleep(3)
                 else:
-                    print("[ERR] Failed to enter the audio passcode.")
-                    driver.quit()
-                    print('[INFO] Return code: 500')
-                    return 500
+                    path_to_mp3 = os.path.normpath(os.path.join(os.getcwd(), "sample.mp3"))
+                    path_to_wav = os.path.normpath(os.path.join(os.getcwd(), "sample.wav"))
 
-    # Press login button
-    login_button = driver.find_element(By.CSS_SELECTOR, "button.btn.btn-primary")
-    actions.move_to_element(login_button).click().perform()
+                    # download the mp3 audio file from the source
+                    urllib.request.urlretrieve(src, path_to_mp3)
 
-    time.sleep(.5)
+                    # Load downloaded mp3 audio file as .wav using ffmpeg
+                    try:
+                        ffmpeg.input(path_to_mp3).output(path_to_wav).run()
+                    except Exception as e:
+                        print(f"[ERR] Failed to convert audio file: {e}")
+                        driver.quit()
+                        print('[INFO] Return code: 400')
+                        return 400
 
-    if hasOTP:
-        from otpauth import otpauth
-        otp = otpauth(otpauth_url)
+                    # translate audio to text with google voice recognition
+                    time.sleep(3)
+                    r = sr.Recognizer()
 
-        inputTotp = driver.find_element(By.ID, 'totp-code')
-        inputTotp.click()
-        inputTotp.send_keys(otp)
-        inputTotp.submit()
+                    passcode_recognized = False
+                    with sr.AudioFile(path_to_wav) as source:
+                        audio_file = r.record(source)
+                        try:
+                            key = r.recognize_google(audio_file, language='en-US', show_all=True)['alternative'][0]['transcript']
+                            passcode_recognized = True
+                            print(f"[INFO] Recaptcha Passcode: {key}")
+                        except sr.UnknownValueError:
+                            print("[ERR] Google Speech Recognition could not understand the audio")
+                        except sr.RequestError as e:
+                            print(f"[ERR] Could not request results from Google Speech Recognition service; {e}")
+
+                    # key in results and submit
+                    if passcode_recognized:
+                        time.sleep(3)
+                        driver.find_element(By.ID, 'audio-response').send_keys(key.lower())
+                        driver.find_element(By.ID, 'audio-response').send_keys(Keys.ENTER)
+                        time.sleep(3)
+                        driver.switch_to.default_content()
+                        time.sleep(3)
+                    else:
+                        print("[ERR] Failed to enter the audio passcode.")
+                        driver.quit()
+                        print('[INFO] Return code: 500')
+                        return 500
+
+        # Press login button
+        login_button = driver.find_element(By.CSS_SELECTOR, "button.btn.btn-primary")
+        actions.move_to_element(login_button).click().perform()
 
         time.sleep(.5)
+
+        if hasOTP:
+            from otpauth import otpauth
+            otp = otpauth(otpauth_url)
+
+            inputTotp = driver.find_element(By.ID, 'totp-code')
+            inputTotp.click()
+            inputTotp.send_keys(otp)
+            inputTotp.submit()
+
+            time.sleep(.5)
 
     # Enter HumanSys
     driver.get('https://cis.ncu.edu.tw/HumanSys/login')
     time.sleep(.5)
 
-    try:
+    # Try to enter HumanSys
+    enter_human_sys = False
+
+    if not enter_human_sys:
         # Try to enter HumanSys
-        submit_button = driver.find_element(By.CLASS_NAME, 'btn-primary')
-        actions.move_to_element(submit_button).click().perform()
-    except:
+        try:
+            submit_button = driver.find_element(By.CLASS_NAME, 'btn-primary')
+            actions.move_to_element(submit_button).click().perform()
+            enter_human_sys = True
+        except:
+            pass
+
+    if not enter_human_sys:
         # Potentially malicious website
-        print('[ERR] Potentially malicious website detected on HumanSys.')
-        submit_button = driver.find_element(By.CLASS_NAME, 'btn-danger')
-        actions.move_to_element(submit_button).click().perform()
+        try:
+            submit_button = driver.find_element(By.CLASS_NAME, 'btn-danger')
+            print('[ERR] Potentially malicious website detected on HumanSys.')
+            actions.move_to_element(submit_button).click().perform()
+        except:
+            pass
+
+    if not enter_human_sys:
+        print('[ERR] Failed to enter HumanSys.')
         driver.quit()
         print('[INFO] Return code: 200')
         return 200
@@ -225,7 +284,7 @@ def signInOut(InOrOut):
     try:
         alert_message = driver.find_element(By.XPATH, '//*[@id="form1"]/div')
         print(f'[ERR] {alert_message.text}')
-        driver.close()
+        driver.quit()
         print('[INFO] Return code: 100')
         return 100
 
@@ -286,13 +345,13 @@ def signInOut(InOrOut):
 
     if not button_clicked:
         print('[ERR] No button clicked.')
-        driver.close()
+        driver.quit()
         print('[INFO] Return code: 600')
         return 600
 
     time.sleep(.5)
 
-    driver.close()
+    driver.quit()
 
     print(f"'{InOrOut}' action completed successfully.")
     print('[INFO] Return code: 000')

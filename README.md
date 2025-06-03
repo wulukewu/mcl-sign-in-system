@@ -5,7 +5,7 @@
 ![Docker Pulls](https://img.shields.io/docker/pulls/wulukewu/mcl-sign-in-system?style=for-the-badge)
 ![Docker Image Size (tag)](https://img.shields.io/docker/image-size/wulukewu/mcl-sign-in-system/latest?label=latest%20image%20size&style=for-the-badge)
 
-An auto sign-in/sign-out system for NCU HumanSys. 
+An auto sign-in/sign-out system for NCU HumanSys.
 
 ## Hub
 
@@ -22,12 +22,14 @@ docker run -e username=your_username \
            -e password=your_password \
            -e otpauth=your_otpauth_url \
            -e inorout=signout \
+           -e cookies="key1=value1; key2=value2; ..." \
            -e discord_token=your_discord_token \
            -e discord_guild_id=your_discord_guild_id \
            -e discord_channel_id=your_discord_channel_id \
            wulukewu/mcl-sign-in-system:latest
 ```
-To sign in instead of signing out (which is the default), omit the `-e inorout=signout` line.  Also, omit the `-e otpauth=your_otpauth_url` line if you don't use OTP. The Discord parameters are optional; omit them if you don't want Discord notifications.
+
+To sign in instead of signing out (which is the default), omit the `-e inorout=signout` line. Also, omit the `-e otpauth=your_otpauth_url` line if you don't use OTP. The `cookies` parameter is optional; omit it if you don't want to use cookies. The Discord parameters are optional; omit them if you don't want Discord notifications.
 
 ## Secrets Configuration (GitHub Actions)
 
@@ -36,26 +38,47 @@ If you're using GitHub Actions, add the following secrets under your repository 
 - `username`: Your Student ID used for login.
 - `password`: Password for your portal login.
 - `otpauth` [optional]: OTP URL to generate a one-time password (OTP) for two-factor authentication.
+- `cookies` [optional]: String of cookies in the format `key1=value1; key2=value2; ...` to use for authentication.
 - `discord_token` [optional]: Discord bot token to send notifications.
 - `discord_guild_id` [optional]: Discord guild (server) ID where the notification should be sent.
 - `discord_channel_id` [optional]: Discord channel ID where the notification should be sent.
-Remember to adjust the `inorout` value as needed.
+  Remember to adjust the `inorout` value as needed.
 
 ## Parameters
 
-The following parameters are configured using environment variables.  These can be set using the `-e` flag when running `docker run` or by defining them in your shell environment.
+The following parameters are configured using environment variables. These can be set using the `-e` flag when running `docker run` or by defining them in your shell environment.
 
-- **`inorout`**: Specify `"signin"` or `"signout"` for the desired action. Defaults to `"signin"` if not specified.
+- **`inorout`**: Specify `"signin"` or `"signout"` for the desired action. If not specified, the script will attempt to sign out first; if sign out is not possible, it will attempt to sign in automatically.
 - **`username`**: Your Student ID used for login.
 - **`password`**: Password for your portal login.
-- **`otpauth`** [optional]: OTP URL to generate a one-time password (OTP) for two-factor authentication.  If not provided, OTP authentication will be skipped.  Set to `"None"` if you do not use OTP.
+- **`otpauth`** [optional]: OTP URL to generate a one-time password (OTP) for two-factor authentication. If not provided, OTP authentication will be skipped. Set to `"None"` if you do not use OTP.
+- **`cookies`** [optional]: String of cookies in the format `key1=value1; key2=value2; ...` to use for authentication. If not provided, cookies will not be used.
 - **`discord_token`** [optional]: Discord bot token to send notifications. If provided, a notification will be sent to the specified channel.
 - **`discord_guild_id`** [optional]: Discord guild (server) ID where the notification should be sent. Required if `discord_token` is provided.
 - **`discord_channel_id`** [optional]: Discord channel ID where the notification should be sent. Required if `discord_token` is provided.
 
+## How to Get Cookies from Chrome
+
+<details>
+    <summary>Click to expand for instructions</summary>
+
+To obtain your cookies from Chrome, follow these steps:
+
+1. Open Chrome and log in to the NCU HumanSys portal.
+2. Right-click anywhere on the page and select **Inspect** to open Developer Tools.
+3. Go to the **Network** tab.
+4. Refresh the page if needed, then click on any request (such as the first entry).
+5. In the right panel, select the **Headers** tab.
+6. Scroll down to the **Request Headers** section and find the **Cookie** field.
+7. Copy the entire value of the **Cookie** header (e.g., `key1=value1; key2=value2; ...`).
+
+![How to get cookies from Chrome](docs/cookies_chrome.png)
+
+</details>
+
 ## Usage
 
-To run the script *directly* (outside of Docker), you must set the required environment variables *before* executing the `python main.py` command. The method for setting environment variables depends on your operating system and shell. Here are a few examples:
+To run the script _directly_ (outside of Docker), you must set the required environment variables _before_ executing the `python main.py` command. The method for setting environment variables depends on your operating system and shell. Here are a few examples:
 
 **Linux/macOS (Bash):**
 
@@ -63,7 +86,8 @@ To run the script *directly* (outside of Docker), you must set the required envi
 export username=your_username
 export password=your_password
 export otpauth=your_otpauth_url
-export inorout=signout  # Optional, defaults to signin
+export inorout=signin_or_signout  # Optional. If not set, the script will try to sign out first, then sign in if sign out is not possible.
+export cookies="key1=value1; key2=value2" # Optional
 export discord_token=your_discord_token # Optional
 export discord_guild_id=your_discord_guild_id # Optional
 export discord_channel_id=your_discord_channel_id # Optional
@@ -76,7 +100,8 @@ python main.py
 set username=your_username
 set password=your_password
 set otpauth=your_otpauth_url
-set inorout=signout  # Optional, defaults to signin
+set inorout=signout  # Optional. If not set, the script will try to sign out first, then sign in if sign out is not possible.
+set cookies="key1=value1; key2=value2" # Optional
 set discord_token=your_discord_token # Optional
 set discord_guild_id=your_discord_guild_id # Optional
 set discord_channel_id=your_discord_channel_id # Optional
@@ -89,31 +114,34 @@ python main.py
 $env:username="your_username"
 $env:password="your_password"
 $env:otpauth="your_otpauth_url"
-$env:inorout="signout" # Optional, defaults to signin
+$env:inorout="signin_or_signout" # Optional. If not set, the script will try to sign out first, then sign in if sign out is not possible.
+$env:cookies="key1=value1; key2=value2" # Optional
 $env:discord_token="your_discord_token" # Optional
 $env:discord_guild_id="your_discord_guild_id" # Optional
 $env:discord_channel_id="your_discord_channel_id" # Optional
 python main.py
 ```
 
-**Important:**  Remember to replace `your_username`, `your_password`, `your_otpauth_url`, `your_discord_token`, `your_discord_guild_id`, and `your_discord_channel_id` with your actual values. The `export` (Linux/macOS) or `set` (Windows) commands set the environment variables for the current shell session.
+**Important:** Remember to replace `your_username`, `your_password`, `your_otpauth_url`, `signin_or_signout`, `your_discord_token`, `your_discord_guild_id`, and `your_discord_channel_id` with your actual values. The `export` (Linux/macOS) or `set` (Windows) commands set the environment variables for the current shell session.
 
 ## Docker
-To build and run the Docker container, use the following commands.  Make sure to replace `your_username`, `your_password`, `your_otpauth_url`, `your_discord_token`, `your_discord_guild_id`, and `your_discord_channel_id` with your actual credentials.
+
+To build and run the Docker container, use the following commands. Make sure to replace `your_username`, `your_password`, `your_otpauth_url`, `signin_or_signout`, `your_discord_token`, `your_discord_guild_id`, and `your_discord_channel_id` with your actual credentials.
 
 ```sh
 docker build -t mcl-sign-in-system .
 docker run -e username=your_username \
            -e password=your_password \
            -e otpauth=your_otpauth_url \
-           -e inorout=signout \
+           -e inorout=signin_or_signout \
+           -e cookies=your_cookies \
            -e discord_token=your_discord_token \
            -e discord_guild_id=your_discord_guild_id \
            -e discord_channel_id=your_discord_channel_id \
            mcl-sign-in-system
 ```
 
-If you want to sign in, you can omit the `-e inorout=signout` line, as the default value is `"signin"`. The Discord parameters are optional; omit them if you don't want Discord notifications.
+If you want to sign in or out, you can set the `-e inorout=signin` or `-e inorout=signout` line. If you omit the `inorout` parameter, the script will try to sign out first, and if not possible, will attempt to sign in automatically. The `cookies` parameter is optional; omit it if you don't want to use cookies. The Discord parameters are optional; omit them if you don't want Discord notifications.
 
 ## Return Codes
 
