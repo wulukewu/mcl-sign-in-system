@@ -41,7 +41,7 @@ jobs:
         with:
           images: |
             ${{ env.GHCR_REGISTRY }}/${{ env.IMAGE_NAME }}
-            ${{ env.DOCKERHUB_REGISTRY }}/wulukewu/mcl-sign-in-system
+            ${{ env.DOCKERHUB_REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: dev
 
       - name: Build and push Docker image to GitHub Container Registry
@@ -60,5 +60,5 @@ jobs:
           file: Dockerfile.dev
           push: true
           tags: |
-            ${{ env.DOCKERHUB_REGISTRY }}/wulukewu/mcl-sign-in-system:dev
+            ${{ env.DOCKERHUB_REGISTRY }}/${{ env.IMAGE_NAME }}:dev
           labels: ${{ steps.meta.outputs.labels }}
