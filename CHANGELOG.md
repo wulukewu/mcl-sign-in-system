@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.5](https://github.com/wulukewu/mcl-sign-in-system/compare/v1.5.4...v1.5.5) (2025-06-03)
+
+
+### Bug Fixes
+
+* disable workContent.click() ([#17](https://github.com/wulukewu/mcl-sign-in-system/issues/17)) ([fc001ce](https://github.com/wulukewu/mcl-sign-in-system/commit/fc001ceb5db0ede11dcabd21d9df741ca83aefd3))
+
 ## [1.5.4](https://github.com/wulukewu/mcl-sign-in-system/compare/v1.5.3...v1.5.4) (2025-06-03)
 
 
