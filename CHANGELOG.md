@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.6](https://github.com/wulukewu/mcl-sign-in-system/compare/v1.5.5...v1.5.6) (2025-06-03)
+
+
+### Bug Fixes
+
+* ElementClickInterceptedException for signout actions ([#19](https://github.com/wulukewu/mcl-sign-in-system/issues/19)) ([c5670c6](https://github.com/wulukewu/mcl-sign-in-system/commit/c5670c6bcd9a113efb103ed992eecc379c630523))
+
 ## [1.5.5](https://github.com/wulukewu/mcl-sign-in-system/compare/v1.5.4...v1.5.5) (2025-06-03)
 
 
