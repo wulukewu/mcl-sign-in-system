@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.4](https://github.com/wulukewu/mcl-sign-in-system/compare/v1.5.3...v1.5.4) (2025-06-03)
+
+
+### Features
+
+* try to use cookies to login ([#15](https://github.com/wulukewu/mcl-sign-in-system/issues/15)) ([1e410fe](https://github.com/wulukewu/mcl-sign-in-system/commit/1e410fe68d64e008f6dbe6c72e06c53635da8c56))
+
 ## [1.5.3](https://github.com/wulukewu/mcl-sign-in-system/compare/v1.5.2...v1.5.3) (2025-06-03)
 
 
