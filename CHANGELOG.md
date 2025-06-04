@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.8](https://github.com/wulukewu/mcl-sign-in-system/compare/v1.5.7...v1.5.8) (2025-06-04)
+
+
+### Bug Fixes
+
+* add latest tag to ghcr ([9977a1d](https://github.com/wulukewu/mcl-sign-in-system/commit/9977a1da6b6ca71c1060a7194e0d3302d47aaadf))
+
 ## [1.5.7](https://github.com/wulukewu/mcl-sign-in-system/compare/v1.5.6...v1.5.7) (2025-06-04)
 
 
