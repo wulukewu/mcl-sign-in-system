@@ -1,9 +1,6 @@
-name: Sign In
+name: Sign In or Sign Out
 
 on:
-  schedule:
-    # UTC+8 9~17 -> UTC+0 1~9, run every weekday.
-    - cron: "0 1 * * 1-5"
   workflow_dispatch:
 
 jobs:
@@ -24,9 +21,8 @@ jobs:
           pip install --upgrade setuptools
           pip install -r requirements.txt
 
-      - name: Run Sign In
+      - name: Run Sign In or Sign Out
         env:
-          inorout: signin
           username: ${{ secrets.username }}
           password: ${{ secrets.password }}
           otpauth: ${{ secrets.otpauth }}

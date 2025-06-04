@@ -1,0 +1,41 @@
+name: Sign In (Docker)
+
+on:
+  schedule:
+    # UTC+8 9~17 -> UTC+0 1~9, run every weekday.
+    - cron: "0 1 * * 1-5"
+  workflow_dispatch:
+
+jobs:
+  run-signin:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Docker
+      uses: docker/setup-buildx-action@v2
+
+    - name: Docker Pull
+      run: docker pull wulukewu/mcl-sign-in-system:latest
+
+    - name: Docker Sign In
+      run: |
+        username="${{ secrets.username }}"
+        password="${{ secrets.password }}"
+        otpauth="${{ secrets.otpauth }}"
+        cookies="${{ secrets.cookies }}"
+        discord_token="${{ secrets.discord_token }}"
+        discord_guild_id="${{ secrets.discord_guild_id }}"
+        discord_channel_id="${{ secrets.discord_channel_id }}"
+        
+        docker run \
+          -e inorout=signin \
+          -e username="$username" \
+          -e password="$password" \
+          -e otpauth="$otpauth" \
+          -e cookies="$cookies" \
+          -e discord_token="$discord_token" \
+          -e discord_guild_id="$discord_guild_id" \
+          -e discord_channel_id="$discord_channel_id" \
+          wulukewu/mcl-sign-in-system:latest

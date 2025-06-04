@@ -7,35 +7,32 @@ on:
   workflow_dispatch:
 
 jobs:
-  run-signout:
+  run-signin:
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-    - name: Set up Docker
-      uses: docker/setup-buildx-action@v2
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.9"
 
-    - name: Docker Pull
-      run: docker pull wulukewu/mcl-sign-in-system:latest
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install --upgrade setuptools
+          pip install -r requirements.txt
 
-    - name: Docker Sign Out
-      run: |      
-        username="${{ secrets.username }}"
-        password="${{ secrets.password }}"
-        otpauth="${{ secrets.otpauth }}"
-        cookies="${{ secrets.cookies }}"
-        discord_token="${{ secrets.discord_token }}"
-        discord_guild_id="${{ secrets.discord_guild_id }}"
-        discord_channel_id="${{ secrets.discord_channel_id }}"
-        
-        docker run \
-          -e inorout=signout \
-          -e username="$username" \
-          -e password="$password" \
-          -e otpauth="$otpauth" \
-          -e cookies="$cookies" \
-          -e discord_token="$discord_token" \
-          -e discord_guild_id="$discord_guild_id" \
-          -e discord_channel_id="$discord_channel_id" \
-          wulukewu/mcl-sign-in-system:latest
+      - name: Run Sign Out
+        env:
+          inorout: signout
+          username: ${{ secrets.username }}
+          password: ${{ secrets.password }}
+          otpauth: ${{ secrets.otpauth }}
+          cookies: ${{ secrets.cookies }}
+          discord_token: ${{ secrets.discord_token }}
+          discord_guild_id: ${{ secrets.discord_guild_id }}
+          discord_channel_id: ${{ secrets.discord_channel_id }}
+        run: |
+          python main.py
