@@ -45,11 +45,15 @@ def signInOut(InOrOut):
 
     # Set up ChromeDriver
     options = webdriver.ChromeOptions()
-    options.add_argument('--headless')
     options.add_argument('--no-sandbox')
     options.add_argument('--disable-dev-shm-usage')
     options.add_argument('--disable-gpu')
     options.add_argument('--window-size=1920x1080')
+    if os.getenv("HEADLESS", "true").lower() == "true":
+        options.add_argument('--headless')
+        print('[INFO] Running in headless mode')
+    else:
+        print('[INFO] Running in non-headless mode')
 
     driver = webdriver.Chrome(options=options)
     actions = ActionChains(driver)
