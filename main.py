@@ -363,7 +363,7 @@ def signInOut(InOrOut):
 
     driver.quit()
 
-    print(f"'{InOrOut}' action completed successfully.")
+    print(f"[INFO] '{InOrOut}' action completed successfully.")
     print('[INFO] Return code: 000')
     return 000
 
