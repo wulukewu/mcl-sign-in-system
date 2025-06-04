@@ -18,7 +18,10 @@ if os.getenv("GITHUB_ACTIONS") != "true":
     except ImportError:
         print("[WARN] python-dotenv not installed, skipping .env loading.")
 
-def signInOut(InOrOut):
+def signInOut():
+    # Load inorout
+    global inorout
+
     # Load account info variables
     username = os.getenv('username')
     password = os.getenv('password')
@@ -186,7 +189,7 @@ def signInOut(InOrOut):
                     # print("\nRetrying to close page and login again...")
                     driver.quit()
                     # time.sleep(60)
-                    # signInOut(InOrOut)
+                    # signInOut(inorout)
                     print('[INFO] Return code: 400')
                     return 400
 
@@ -308,42 +311,33 @@ def signInOut(InOrOut):
 
     button_clicked = False
 
-    if InOrOut == 'signin':
+    if inorout == 'signin':
         workContent = driver.find_element(By.ID, 'AttendWork')
         # workContent.click()  # Removed to avoid ElementClickInterceptedException
         workContent.send_keys('MCL工讀')
         time.sleep(.5)
 
         signin_button = driver.find_element(By.ID, 'signin')
-        signin_button.click()
+        driver.execute_script("arguments[0].click();", signin_button)
         button_clicked = True
 
-    elif InOrOut == 'signout':
+    elif inorout == 'signout':
         signout_button = driver.find_element(By.ID, 'signout')
         driver.execute_script("arguments[0].scrollIntoView(true);", signout_button)
-        try:
-            signout_button.click()
-        except Exception as e:
-            print(f"[WARN] Normal click failed: {e}, trying JS click.")
-            driver.execute_script("arguments[0].click();", signout_button)
+        driver.execute_script("arguments[0].click();", signout_button)
         button_clicked = True
 
-    elif InOrOut is None:
-        print('[INFO] No InOrOut option specified. ')
+    elif inorout is None:
+        print('[INFO] No inorout option specified. ')
 
         if not button_clicked:
             try:
                 signout_button = driver.find_element(By.ID, 'signout')
                 driver.execute_script("arguments[0].scrollIntoView(true);", signout_button)
-                try:
-                    signout_button.click()
-                except Exception as e:
-                    print(f"[WARN] Normal click failed: {e}, trying JS click.")
-                    driver.execute_script("arguments[0].click();", signout_button)
-
+                driver.execute_script("arguments[0].click();", signout_button)
                 print('[INFO] Sign-out button clicked.')
                 button_clicked = True
-                InOrOut = 'signout'
+                inorout = 'signout'
             except: pass
 
         if not button_clicked:
@@ -355,11 +349,11 @@ def signInOut(InOrOut):
                 time.sleep(.5)
 
                 signin_button = driver.find_element(By.ID, 'signin')
-                signin_button.click()
+                driver.execute_script("arguments[0].click();", signin_button)
 
                 print('[INFO] Sign-in button clicked.')
                 button_clicked = True
-                InOrOut = 'signin'
+                inorout = 'signin'
             except: pass
 
     if not button_clicked:
@@ -372,12 +366,12 @@ def signInOut(InOrOut):
 
     driver.quit()
 
-    print(f"[INFO] '{InOrOut}' action completed successfully.")
+    print(f"[INFO] '{inorout}' action completed successfully.")
     print('[INFO] Return code: 000')
     return 000
 
 if __name__ == '__main__':
-    # Get inorout from environment, default to "signin"
+    # Get inorout from environment
     inorout = os.getenv('inorout', None)
 
     # Set retry limit
@@ -389,7 +383,7 @@ if __name__ == '__main__':
     # Retry until successful
     for i in range(retry_limit):
         # Call the signInOut function with the specified action
-        result_code = signInOut(inorout)
+        result_code = signInOut()
         print(f"Result code: {result_code}")
 
         if result_code in result_code_type:
