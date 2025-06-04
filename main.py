@@ -10,8 +10,13 @@ from selenium.webdriver.common.keys import Keys
 
 import notification as nt
 
-# from dotenv import load_dotenv
-# load_dotenv()
+# Conditionally load .env only if not running in GitHub Actions
+if os.getenv("GITHUB_ACTIONS") != "true":
+    try:
+        from dotenv import load_dotenv
+        load_dotenv()
+    except ImportError:
+        print("[WARN] python-dotenv not installed, skipping .env loading.")
 
 def signInOut(InOrOut):
     # Load account info variables
