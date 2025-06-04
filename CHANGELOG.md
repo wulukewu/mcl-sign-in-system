@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.7](https://github.com/wulukewu/mcl-sign-in-system/compare/v1.5.6...v1.5.7) (2025-06-04)
+
+
+### Bug Fixes
+
+* Element is not clickable at point (294, 510) ([#23](https://github.com/wulukewu/mcl-sign-in-system/issues/23)) ([eebf6f0](https://github.com/wulukewu/mcl-sign-in-system/commit/eebf6f09fd49fec5af28629f33bde5857f1c4b16))
+
 ## [1.5.6](https://github.com/wulukewu/mcl-sign-in-system/compare/v1.5.5...v1.5.6) (2025-06-03)
 
 
