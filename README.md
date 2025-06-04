@@ -64,7 +64,7 @@ The following parameters are configured using environment variables. These can b
 
 To obtain your cookies from Chrome, follow these steps:
 
-1. Open Chrome and log in to the NCU HumanSys portal.
+1. Open Chrome and log in to the [NCU portal](https://portal.ncu.edu.tw). (It is suggested to check the `Remember me` checkbox if you want to run this automatically.)
 2. Right-click anywhere on the page and select **Inspect** to open Developer Tools.
 3. Go to the **Network** tab.
 4. Refresh the page if needed, then click on any request (such as the first entry).
