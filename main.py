@@ -318,17 +318,13 @@ def signInOut():
         time.sleep(.5)
 
         signin_button = driver.find_element(By.ID, 'signin')
-        signin_button.click()
+        driver.execute_script("arguments[0].click();", signin_button)
         button_clicked = True
 
     elif inorout == 'signout':
         signout_button = driver.find_element(By.ID, 'signout')
         driver.execute_script("arguments[0].scrollIntoView(true);", signout_button)
-        try:
-            signout_button.click()
-        except Exception as e:
-            print(f"[WARN] Normal click failed: {e}, trying JS click.")
-            driver.execute_script("arguments[0].click();", signout_button)
+        driver.execute_script("arguments[0].click();", signout_button)
         button_clicked = True
 
     elif inorout is None:
@@ -338,12 +334,7 @@ def signInOut():
             try:
                 signout_button = driver.find_element(By.ID, 'signout')
                 driver.execute_script("arguments[0].scrollIntoView(true);", signout_button)
-                try:
-                    signout_button.click()
-                except Exception as e:
-                    print(f"[WARN] Normal click failed: {e}, trying JS click.")
-                    driver.execute_script("arguments[0].click();", signout_button)
-
+                driver.execute_script("arguments[0].click();", signout_button)
                 print('[INFO] Sign-out button clicked.')
                 button_clicked = True
                 inorout = 'signout'
@@ -358,7 +349,7 @@ def signInOut():
                 time.sleep(.5)
 
                 signin_button = driver.find_element(By.ID, 'signin')
-                signin_button.click()
+                driver.execute_script("arguments[0].click();", signin_button)
 
                 print('[INFO] Sign-in button clicked.')
                 button_clicked = True
