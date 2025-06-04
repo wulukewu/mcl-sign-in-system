@@ -1,4 +1,4 @@
-name: Sign In
+name: Sign In (Docker)
 
 on:
   schedule:
