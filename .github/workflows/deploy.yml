@@ -40,7 +40,9 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ env.GHCR_REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.ref_name }}
+          tags: |
+            ${{ env.GHCR_REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+            ${{ env.GHCR_REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.ref_name }}
           labels: ${{ steps.meta-ghcr.outputs.labels }}
 
   build-and-push-dockerhub:
