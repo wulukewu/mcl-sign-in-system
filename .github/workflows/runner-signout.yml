@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  run-signin:
+  run-signout:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
