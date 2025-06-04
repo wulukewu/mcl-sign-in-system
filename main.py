@@ -10,8 +10,13 @@ from selenium.webdriver.common.keys import Keys
 
 import notification as nt
 
-# from dotenv import load_dotenv
-# load_dotenv()
+# Conditionally load .env only if not running in GitHub Actions
+if os.getenv("GITHUB_ACTIONS") != "true":
+    try:
+        from dotenv import load_dotenv
+        load_dotenv()
+    except ImportError:
+        print("[WARN] python-dotenv not installed, skipping .env loading.")
 
 def signInOut(InOrOut):
     # Load account info variables
@@ -40,11 +45,15 @@ def signInOut(InOrOut):
 
     # Set up ChromeDriver
     options = webdriver.ChromeOptions()
-    options.add_argument('--headless')
     options.add_argument('--no-sandbox')
     options.add_argument('--disable-dev-shm-usage')
     options.add_argument('--disable-gpu')
     options.add_argument('--window-size=1920x1080')
+    if os.getenv("HEADLESS", "true").lower() == "true":
+        options.add_argument('--headless')
+        print('[INFO] Running in headless mode')
+    else:
+        print('[INFO] Running in non-headless mode')
 
     driver = webdriver.Chrome(options=options)
     actions = ActionChains(driver)
@@ -363,7 +372,7 @@ def signInOut(InOrOut):
 
     driver.quit()
 
-    print(f"'{InOrOut}' action completed successfully.")
+    print(f"[INFO] '{InOrOut}' action completed successfully.")
     print('[INFO] Return code: 000')
     return 000
 
