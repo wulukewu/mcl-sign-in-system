@@ -1,0 +1,38 @@
+name: Sign Out
+
+on:
+  schedule:
+    # UTC+8 9~17 -> UTC+0 1~9, run every weekday.
+    - cron: "10 9 * * 1-5"
+  workflow_dispatch:
+
+jobs:
+  run-signin:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.9"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install --upgrade setuptools
+          pip install -r requirements.txt
+
+      - name: Run Sign Out
+        env:
+          inorout: signout
+          username: ${{ secrets.username }}
+          password: ${{ secrets.password }}
+          otpauth: ${{ secrets.otpauth }}
+          cookies: ${{ secrets.cookies }}
+          discord_token: ${{ secrets.discord_token }}
+          discord_guild_id: ${{ secrets.discord_guild_id }}
+          discord_channel_id: ${{ secrets.discord_channel_id }}
+        run: |
+          python main.py
