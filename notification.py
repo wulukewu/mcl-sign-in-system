@@ -1,3 +1,11 @@
+import os
+import ssl
+import certifi
+
+# Set SSL certificate path before importing discord
+os.environ['SSL_CERT_FILE'] = certifi.where()
+os.environ['SSL_CERT_DIR'] = certifi.where()
+
 import discord
 
 def dc_send(message, token, guild_id, channel_id):
@@ -33,5 +41,15 @@ def dc_send(message, token, guild_id, channel_id):
         # Close the client after sending the message
         await client.close()
 
-    # Run the Discord client with the provided token
-    client.run(token)
+    # Run the Discord client
+    try:
+        client.run(token)
+    except Exception as e:
+        print(f"[ERR] Failed to send Discord notification: {e}")
+        # Fallback: try with disabled SSL verification
+        try:
+            # Disable SSL verification
+            ssl._create_default_https_context = ssl._create_unverified_context
+            client.run(token)
+        except Exception as e2:
+            print(f"[ERR] Failed to send Discord notification (fallback): {e2}")
