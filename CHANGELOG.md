@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.9](https://github.com/wulukewu/mcl-sign-in-system/compare/v1.5.8...v1.5.9) (2025-08-01)
+
+
+### Bug Fixes
+
+* update HumanSys Login path ([#26](https://github.com/wulukewu/mcl-sign-in-system/issues/26)) ([7674627](https://github.com/wulukewu/mcl-sign-in-system/commit/76746273a6f1e750cf9b89a54fc5c19586f27be2))
+
 ## [1.5.8](https://github.com/wulukewu/mcl-sign-in-system/compare/v1.5.7...v1.5.8) (2025-06-04)
 
 
