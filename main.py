@@ -257,7 +257,7 @@ def signInOut():
             time.sleep(.5)
 
     # Enter HumanSys
-    driver.get('https://cis.ncu.edu.tw/HumanSys/login')
+    driver.get('https://cis.ncu.edu.tw/HumanSys/oauthLogin')
     time.sleep(.5)
 
     # Try to enter HumanSys
