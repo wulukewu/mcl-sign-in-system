@@ -295,10 +295,11 @@ def signInOut():
     # Check for alert message
     try:
         alert_message = driver.find_element(By.XPATH, '//*[@id="form1"]/div')
-        print(f'[ERR] {alert_message.text}')
+        alert_text = alert_message.text
+        print(f'[WARN] {alert_text}')
         driver.quit()
-        print('[INFO] Return code: 100')
-        return 100
+        print('[WARN] Return code: 100')
+        return 100, alert_text
 
     except Exception as e:
         print('[INFO] No alert message detected.')
@@ -381,9 +382,17 @@ if __name__ == '__main__':
     result_code_type_count = {}
 
     # Retry until successful
+    alert_text = None
     for i in range(retry_limit):
         # Call the signInOut function with the specified action
-        result_code = signInOut()
+        result = signInOut()
+        
+        # Handle tuple return (error code + alert text) or single return (error code)
+        if isinstance(result, tuple):
+            result_code, alert_text = result
+        else:
+            result_code = result
+            
         print(f"Result code: {result_code}")
 
         if result_code in result_code_type:
@@ -393,6 +402,9 @@ if __name__ == '__main__':
             result_code_type_count[result_code] = 1
 
         if result_code == 000:
+            break
+        elif result_code == 100:
+            print('[WARN] Error code 100 detected. No retry needed.')
             break
 
         # time.sleep(60)
@@ -409,6 +421,8 @@ if __name__ == '__main__':
     if discord_token and guild_id and channel_id:
         if result_code == 000:
             message = f"Successfully signed {inorout}!"
+        elif result_code == 100 and alert_text:
+            message = f"Failed to sign {inorout} with result code {result_code} ({alert_text})."
         elif len(result_code_type) == 1:
             message = f"Failed to sign {inorout} with result code {result_code}."
         else:
