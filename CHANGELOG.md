@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.10](https://github.com/wulukewu/mcl-sign-in-system/compare/v1.5.9...v1.5.10) (2025-08-01)
+
+
+### Bug Fixes
+
+* break when result_code is 100 ([#28](https://github.com/wulukewu/mcl-sign-in-system/issues/28)) ([e137ad2](https://github.com/wulukewu/mcl-sign-in-system/commit/e137ad2362b7d2f0f9a3f2a5cc8a1b7d59851669))
+
 ## [1.5.9](https://github.com/wulukewu/mcl-sign-in-system/compare/v1.5.8...v1.5.9) (2025-08-01)
 
 
