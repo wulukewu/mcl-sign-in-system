@@ -27,6 +27,7 @@ jobs:
           password: ${{ secrets.password }}
           otpauth: ${{ secrets.otpauth }}
           cookies: ${{ secrets.cookies }}
+          discord_webhook_url: ${{ secrets.discord_webhook_url }}
           discord_token: ${{ secrets.discord_token }}
           discord_guild_id: ${{ secrets.discord_guild_id }}
           discord_channel_id: ${{ secrets.discord_channel_id }}

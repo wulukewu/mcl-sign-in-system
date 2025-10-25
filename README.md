@@ -23,13 +23,14 @@ docker run -e username=your_username \
            -e otpauth=your_otpauth_url \
            -e inorout=signout \
            -e cookies="key1=value1; key2=value2; ..." \
+           -e discord_webhook_url=your_discord_webhook_url \
            -e discord_token=your_discord_token \
            -e discord_guild_id=your_discord_guild_id \
            -e discord_channel_id=your_discord_channel_id \
            wulukewu/mcl-sign-in-system:latest
 ```
 
-To sign in instead of signing out (which is the default), omit the `-e inorout=signout` line. Also, omit the `-e otpauth=your_otpauth_url` line if you don't use OTP. The `cookies` parameter is optional; omit it if you don't want to use cookies. The Discord parameters are optional; omit them if you don't want Discord notifications.
+To sign in instead of signing out (which is the default), omit the `-e inorout=signout` line. Also, omit the `-e otpauth=your_otpauth_url` line if you don't use OTP. The `cookies` parameter is optional; omit it if you don't want to use cookies. The Discord parameters are optional; omit them if you don't want Discord notifications. You can use either `discord_webhook_url` or the combination of `discord_token`, `discord_guild_id`, and `discord_channel_id` for notifications.
 
 ## Secrets Configuration (GitHub Actions)
 
@@ -39,6 +40,7 @@ If you're using GitHub Actions, add the following secrets under your repository 
 - `password`: Password for your portal login.
 - `otpauth` [optional]: OTP URL to generate a one-time password (OTP) for two-factor authentication.
 - `cookies` [optional]: String of cookies in the format `key1=value1; key2=value2; ...` to use for authentication.
+- `discord_webhook_url` [optional]: Discord webhook URL to send notifications. This can be used as an alternative to `discord_token`, `discord_guild_id`, and `discord_channel_id`.
 - `discord_token` [optional]: Discord bot token to send notifications.
 - `discord_guild_id` [optional]: Discord guild (server) ID where the notification should be sent.
 - `discord_channel_id` [optional]: Discord channel ID where the notification should be sent.
@@ -53,6 +55,7 @@ The following parameters are configured using environment variables. These can b
 - **`password`**: Password for your portal login.
 - **`otpauth`** [optional]: OTP URL to generate a one-time password (OTP) for two-factor authentication. If not provided, OTP authentication will be skipped. Set to `"None"` if you do not use OTP.
 - **`cookies`** [optional]: String of cookies in the format `key1=value1; key2=value2; ...` to use for authentication. If not provided, cookies will not be used.
+- **`discord_webhook_url`** [optional]: Discord webhook URL to send notifications. If provided, a notification will be sent via webhook. This can be used as an alternative to `discord_token`, `discord_guild_id`, and `discord_channel_id`.
 - **`discord_token`** [optional]: Discord bot token to send notifications. If provided, a notification will be sent to the specified channel.
 - **`discord_guild_id`** [optional]: Discord guild (server) ID where the notification should be sent. Required if `discord_token` is provided.
 - **`discord_channel_id`** [optional]: Discord channel ID where the notification should be sent. Required if `discord_token` is provided.
@@ -88,6 +91,7 @@ export password=your_password
 export otpauth=your_otpauth_url
 export inorout=signin_or_signout  # Optional. If not set, the script will try to sign out first, then sign in if sign out is not possible.
 export cookies="key1=value1; key2=value2" # Optional
+export discord_webhook_url=your_discord_webhook_url # Optional
 export discord_token=your_discord_token # Optional
 export discord_guild_id=your_discord_guild_id # Optional
 export discord_channel_id=your_discord_channel_id # Optional
@@ -102,6 +106,7 @@ set password=your_password
 set otpauth=your_otpauth_url
 set inorout=signout  # Optional. If not set, the script will try to sign out first, then sign in if sign out is not possible.
 set cookies="key1=value1; key2=value2" # Optional
+set discord_webhook_url=your_discord_webhook_url # Optional
 set discord_token=your_discord_token # Optional
 set discord_guild_id=your_discord_guild_id # Optional
 set discord_channel_id=your_discord_channel_id # Optional
@@ -116,17 +121,18 @@ $env:password="your_password"
 $env:otpauth="your_otpauth_url"
 $env:inorout="signin_or_signout" # Optional. If not set, the script will try to sign out first, then sign in if sign out is not possible.
 $env:cookies="key1=value1; key2=value2" # Optional
+$env:discord_webhook_url="your_discord_webhook_url" # Optional
 $env:discord_token="your_discord_token" # Optional
 $env:discord_guild_id="your_discord_guild_id" # Optional
 $env:discord_channel_id="your_discord_channel_id" # Optional
 python main.py
 ```
 
-**Important:** Remember to replace `your_username`, `your_password`, `your_otpauth_url`, `signin_or_signout`, `your_discord_token`, `your_discord_guild_id`, and `your_discord_channel_id` with your actual values. The `export` (Linux/macOS) or `set` (Windows) commands set the environment variables for the current shell session.
+**Important:** Remember to replace `your_username`, `your_password`, `your_otpauth_url`, `signin_or_signout`, `your_discord_webhook_url`, `your_discord_token`, `your_discord_guild_id`, and `your_discord_channel_id` with your actual values. The `export` (Linux/macOS) or `set` (Windows) commands set the environment variables for the current shell session.
 
 ## Docker
 
-To build and run the Docker container, use the following commands. Make sure to replace `your_username`, `your_password`, `your_otpauth_url`, `signin_or_signout`, `your_discord_token`, `your_discord_guild_id`, and `your_discord_channel_id` with your actual credentials.
+To build and run the Docker container, use the following commands. Make sure to replace `your_username`, `your_password`, `your_otpauth_url`, `signin_or_signout`, `your_discord_webhook_url`, `your_discord_token`, `your_discord_guild_id`, and `your_discord_channel_id` with your actual credentials.
 
 ```sh
 docker build -t mcl-sign-in-system .
@@ -135,13 +141,14 @@ docker run -e username=your_username \
            -e otpauth=your_otpauth_url \
            -e inorout=signin_or_signout \
            -e cookies=your_cookies \
+           -e discord_webhook_url=your_discord_webhook_url \
            -e discord_token=your_discord_token \
            -e discord_guild_id=your_discord_guild_id \
            -e discord_channel_id=your_discord_channel_id \
            mcl-sign-in-system
 ```
 
-If you want to sign in or out, you can set the `-e inorout=signin` or `-e inorout=signout` line. If you omit the `inorout` parameter, the script will try to sign out first, and if not possible, will attempt to sign in automatically. The `cookies` parameter is optional; omit it if you don't want to use cookies. The Discord parameters are optional; omit them if you don't want Discord notifications.
+If you want to sign in or out, you can set the `-e inorout=signin` or `-e inorout=signout` line. If you omit the `inorout` parameter, the script will try to sign out first, and if not possible, will attempt to sign in automatically. The `cookies` parameter is optional; omit it if you don't want to use cookies. The Discord parameters are optional; omit them if you don't want Discord notifications. You can use either `discord_webhook_url` or the combination of `discord_token`, `discord_guild_id`, and `discord_channel_id` for notifications.
 
 ## Return Codes
 
