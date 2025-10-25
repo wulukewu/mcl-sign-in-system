@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.6.0](https://github.com/wulukewu/mcl-sign-in-system/compare/v1.5.10...v1.6.0) (2025-10-25)
+
+
+### Features
+
+* send notification to discord webhook ([#31](https://github.com/wulukewu/mcl-sign-in-system/issues/31)) ([73e1479](https://github.com/wulukewu/mcl-sign-in-system/commit/73e14798ff446e552fd008c9b6ed5a2ca0863e92))
+
 ## [1.5.10](https://github.com/wulukewu/mcl-sign-in-system/compare/v1.5.9...v1.5.10) (2025-08-01)
 
 
