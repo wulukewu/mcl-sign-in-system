@@ -410,6 +410,7 @@ if __name__ == '__main__':
         # time.sleep(60)
 
     # Send notification to Discord
+    discord_webhook_url = os.getenv('discord_webhook_url')
     discord_token = os.getenv('discord_token')
     guild_id = os.getenv('discord_guild_id')
     channel_id = os.getenv('discord_channel_id')
@@ -418,18 +419,21 @@ if __name__ == '__main__':
     if channel_id:
         channel_id = int(channel_id)
 
-    if discord_token and guild_id and channel_id:
-        if result_code == 000:
-            message = f"Successfully signed {inorout}!"
-        elif result_code == 100 and alert_text:
-            message = f"Failed to sign {inorout} with result code {result_code} ({alert_text})."
-        elif len(result_code_type) == 1:
-            message = f"Failed to sign {inorout} with result code {result_code}."
-        else:
-            result_code_type.sort()
-            message = f"Failed to sign {inorout} with multiple result codes: \n{'. '.join(f'{code} (*{result_code_type_count[code]})' for code in result_code_type)}."
+    if result_code == 000:
+        message = f"Successfully signed {inorout}!"
+    elif result_code == 100 and alert_text:
+        message = f"Failed to sign {inorout} with result code {result_code} ({alert_text})."
+    elif len(result_code_type) == 1:
+        message = f"Failed to sign {inorout} with result code {result_code}."
+    else:
+        result_code_type.sort()
+        message = f"Failed to sign {inorout} with multiple result codes: \n{'. '.join(f'{code} (*{result_code_type_count[code]})' for code in result_code_type)}."
+
+    if discord_webhook_url:
+        print(f"[INFO] Sending message to Discord via webhook: {message}")
+        nt.dc_send_webhook(message, discord_webhook_url)
+    elif discord_token and guild_id and channel_id:
         print(f"[INFO] Sending message to Discord: {message}")
         nt.dc_send(message, discord_token, guild_id, channel_id)
-
     else:
-        print("[WARN] Discord notification not sent. Missing one or more environment variables.")
+        print("[WARN] Discord notification not sent. Missing environment variables for either webhook or bot.")

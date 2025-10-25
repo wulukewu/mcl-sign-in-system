@@ -7,4 +7,5 @@ selenium
 SpeechRecognition
 urllib3
 webdriver_manager
-# python-dotenv
+python-dotenv
+requests

@@ -7,9 +7,18 @@ os.environ['SSL_CERT_FILE'] = certifi.where()
 os.environ['SSL_CERT_DIR'] = certifi.where()
 
 import discord
+import requests
+
+def dc_send_webhook(message, webhook_url):
+    try:
+        data = {"content": message}
+        response = requests.post(webhook_url, json=data)
+        response.raise_for_status()
+        print("[INFO] Discord notification sent successfully via webhook.")
+    except requests.exceptions.RequestException as e:
+        print(f"[ERR] Failed to send Discord notification via webhook: {e}")
 
 def dc_send(message, token, guild_id, channel_id):
-
     # Set up Discord client with default intents
     intents = discord.Intents.default()
     client = discord.Client(intents=intents)
