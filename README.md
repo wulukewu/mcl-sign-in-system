@@ -155,15 +155,15 @@ If you want to sign in or out, you can set the `-e inorout=signin` or `-e inorou
 
 ## Return Codes
 
-The script will return the following codes to indicate the outcome of the execution:
+The script returns the following descriptive status codes (constants defined in `main.py`):
 
-- `000`: Successfully completed the sign-in or sign-out action.
-- `100`: Alert message detected, nothing to do.
-- `200`: Potentially malicious website detected.
-- `300`: Failed to solve reCAPTCHA.
-- `400`: Failed to find the audio source for reCAPTCHA.
-- `500`: Failed to enter the audio passcode.
-- `600`: Invalid `inorout` option.
+- `SUCCESS`: Successfully completed the sign-in or sign-out action.
+- `ALERT`: Alert message detected, nothing to do.
+- `MALICIOUS`: Potentially malicious website detected.
+- `RECAPTCHA_FAIL`: Failed to solve reCAPTCHA.
+- `AUDIO_FAIL`: Failed to find the audio source or convert audio for reCAPTCHA.
+- `PASSCODE_FAIL`: Failed to enter the audio passcode.
+- `ACTION_FAIL`: Invalid `inorout` option, project not found, or button not clickable.
 
 ## References
 

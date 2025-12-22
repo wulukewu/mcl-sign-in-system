@@ -12,6 +12,16 @@ from selenium.webdriver.support import expected_conditions as EC
 
 import notification as nt
 
+class Status:
+    SUCCESS = "SUCCESS"
+    ALERT = "ALERT"
+    MALICIOUS = "MALICIOUS"
+    RECAPTCHA_FAIL = "RECAPTCHA_FAIL"
+    AUDIO_FAIL = "AUDIO_FAIL"
+    PASSCODE_FAIL = "PASSCODE_FAIL"
+    ACTION_FAIL = "ACTION_FAIL"
+
+
 # Conditionally load .env only if not running in GitHub Actions
 if os.getenv("GITHUB_ACTIONS") != "true":
     try:
@@ -166,8 +176,8 @@ def signInOut():
             if not audio_button_found:
                 print("[ERR] Unable to find the audio challenge button in any frame.")
                 driver.quit()
-                print('[INFO] Return code: 300')
-                return 300
+                print(f'[INFO] Return: {Status.RECAPTCHA_FAIL}')
+                return Status.RECAPTCHA_FAIL
 
             if audio_button_found:
                 # switch to recaptcha audio challenge frame
@@ -193,8 +203,8 @@ def signInOut():
                     driver.quit()
                     # time.sleep(60)
                     # signInOut(inorout)
-                    print('[INFO] Return code: 400')
-                    return 400
+                    print(f'[INFO] Return: {Status.AUDIO_FAIL}')
+                    return Status.AUDIO_FAIL
 
                 else:
                     path_to_mp3 = os.path.normpath(os.path.join(os.getcwd(), "sample.mp3"))
@@ -209,8 +219,8 @@ def signInOut():
                     except Exception as e:
                         print(f"[ERR] Failed to convert audio file: {e}")
                         driver.quit()
-                        print('[INFO] Return code: 400')
-                        return 400
+                        print(f'[INFO] Return: {Status.AUDIO_FAIL}')
+                        return Status.AUDIO_FAIL
 
                     # translate audio to text with google voice recognition
                     time.sleep(3)
@@ -239,8 +249,8 @@ def signInOut():
                     else:
                         print("[ERR] Failed to enter the audio passcode.")
                         driver.quit()
-                        print('[INFO] Return code: 500')
-                        return 500
+                        print(f'[INFO] Return: {Status.PASSCODE_FAIL}')
+                        return Status.PASSCODE_FAIL
 
         # Press login button
         login_button = driver.find_element(By.CSS_SELECTOR, "button.btn.btn-primary")
@@ -287,8 +297,8 @@ def signInOut():
     if not enter_human_sys:
         print('[ERR] Failed to enter HumanSys.')
         driver.quit()
-        print('[INFO] Return code: 200')
-        return 200
+        print(f'[INFO] Return: {Status.MALICIOUS}')
+        return Status.MALICIOUS
 
     time.sleep(.5)
 
@@ -301,8 +311,8 @@ def signInOut():
         alert_text = alert_message.text
         print(f'[WARN] {alert_text}')
         driver.quit()
-        print('[WARN] Return code: 100')
-        return 100, alert_text
+        print(f'[WARN] Return: {Status.ALERT}')
+        return Status.ALERT, alert_text
 
     except Exception as e:
         print('[INFO] No alert message detected.')
@@ -368,16 +378,16 @@ def signInOut():
         if inorout == 'signin':
             print('[ERR] Cannot sign in because project was not found to click the button.')
             driver.quit()
-            print('[INFO] Return code: 600')
-            return 600
+            print(f'[INFO] Return: {Status.ACTION_FAIL}')
+            return Status.ACTION_FAIL
     
     # If project found but we failed to open the modal (button unclickable, click failed, etc.)
     # We must abort to avoid errors, as requested.
     if project_found and not add_signin_clicked:
         print('[ERR] Target project found but failed to open sign-in modal. Aborting.')
         driver.quit()
-        print('[INFO] Return code: 600')
-        return 600
+        print(f'[INFO] Return: {Status.ACTION_FAIL}')
+        return Status.ACTION_FAIL
 
     time.sleep(.5)
 
@@ -396,8 +406,8 @@ def signInOut():
         except Exception as e:
             print(f"[ERR] Failed to perform sign-in actions (modal likely missing): {e}")
             driver.quit()
-            print('[INFO] Return code: 600')
-            return 600
+            print(f'[INFO] Return: {Status.ACTION_FAIL}')
+            return Status.ACTION_FAIL
 
     elif inorout == 'signout':
         signout_button = driver.find_element(By.ID, 'signout')
@@ -437,16 +447,16 @@ def signInOut():
     if not button_clicked:
         print('[ERR] No button clicked.')
         driver.quit()
-        print('[INFO] Return code: 600')
-        return 600
+        print(f'[INFO] Return: {Status.ACTION_FAIL}')
+        return Status.ACTION_FAIL
 
     time.sleep(.5)
 
     driver.quit()
 
     print(f"[INFO] '{inorout}' action completed successfully.")
-    print('[INFO] Return code: 000')
-    return 000
+    print(f'[INFO] Return: {Status.SUCCESS}')
+    return Status.SUCCESS
 
 if __name__ == '__main__':
     # Get inorout from environment
@@ -478,13 +488,13 @@ if __name__ == '__main__':
             result_code_type.append(result_code)
             result_code_type_count[result_code] = 1
 
-        if result_code == 000:
+        if result_code == Status.SUCCESS:
             break
-        elif result_code == 100:
-            print('[WARN] Error code 100 detected. No retry needed.')
+        elif result_code == Status.ALERT:
+            print('[WARN] Alert detected. No retry needed.')
             break
-        elif result_code == 600:
-            print('[WARN] Error code 600 detected (button/modal issue). No retry needed.')
+        elif result_code == Status.ACTION_FAIL:
+            print('[WARN] Action failed (button/modal issue). No retry needed.')
             break
 
         # time.sleep(60)
@@ -499,15 +509,15 @@ if __name__ == '__main__':
     if channel_id:
         channel_id = int(channel_id)
 
-    if result_code == 000:
+    if result_code == Status.SUCCESS:
         message = f"Successfully signed {inorout}!"
-    elif result_code == 100 and alert_text:
-        message = f"Failed to sign {inorout} with result code {result_code} ({alert_text})."
+    elif result_code == Status.ALERT and alert_text:
+        message = f"Failed to sign {inorout}: Alert ({alert_text})."
     elif len(result_code_type) == 1:
-        message = f"Failed to sign {inorout} with result code {result_code}."
+        message = f"Failed to sign {inorout}: {result_code}."
     else:
         result_code_type.sort()
-        message = f"Failed to sign {inorout} with multiple result codes: \n{'. '.join(f'{code} (*{result_code_type_count[code]})' for code in result_code_type)}."
+        message = f"Failed to sign {inorout} with multiple errors: \n{'. '.join(f'{code} (*{result_code_type_count[code]})' for code in result_code_type)}."
 
     if discord_webhook_url:
         print(f"[INFO] Sending message to Discord via webhook: {message}")
