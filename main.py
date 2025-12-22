@@ -304,9 +304,48 @@ def signInOut():
     except Exception as e:
         print('[INFO] No alert message detected.')
 
-    # Sign-in or sign-out actions
-    add_signin_button = driver.find_element(By.CSS_SELECTOR, 'a.btn.btn-default')
-    actions.move_to_element(add_signin_button).click().perform()
+    # Find project and click add signin
+    project_found = False
+    add_signin_clicked = False
+    try:
+        table_rows = driver.find_elements(By.CSS_SELECTOR, "table tr")
+        
+        for row in table_rows:
+            cells = row.find_elements(By.TAG_NAME, "td")
+            
+            # Check if it's a data row and matches the project name
+            if len(cells) > 1 and "計畫：數學系" in cells[1].text:
+                print(f"[INFO] Found target project: {cells[1].text}")
+                
+                try:
+                    # Find the '新增簽到' button in this row. 
+                    add_signin_button = row.find_element(By.XPATH, ".//a[contains(text(), '新增簽到')]")
+                    
+                    try:
+                        actions.move_to_element(add_signin_button).click().perform()
+                        print('[INFO] Clicked add_signin_button via ActionChains.')
+                    except Exception as click_err:
+                        print(f"[WARN] Standard click failed, trying JavaScript click: {click_err}")
+                        driver.execute_script("arguments[0].click();", add_signin_button)
+                        print('[INFO] Clicked add_signin_button via JavaScript.')
+                    
+                    add_signin_clicked = True
+                    project_found = True
+                    break
+                except Exception as e:
+                    print(f"[WARN] Found project but could not find or click button: {e}")
+                    
+    except Exception as e:
+        print(f"[ERR] Error processing table: {e}")
+
+    if not project_found:
+        print('[WARN] Target project "計畫：數學系" not found.')
+    
+    if project_found and not add_signin_clicked:
+        print('[ERR] Target project found but failed to click the button.')
+        driver.quit()
+        print('[INFO] Return code: 600')
+        return 600
 
     time.sleep(.5)
 
