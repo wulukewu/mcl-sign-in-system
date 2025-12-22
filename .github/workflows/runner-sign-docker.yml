@@ -6,7 +6,6 @@ on:
       project_name:
         description: 'Project Name'
         required: false
-        default: '計畫：數學系'
 
 jobs:
   run-signin:
