@@ -38,6 +38,7 @@ def signInOut():
     username = os.getenv('username')
     password = os.getenv('password')
     project_name = os.getenv('project_name', '計畫：數學系')
+    work_content = os.getenv('work_content', 'MCL工讀')
 
     # Check for OTP availability
     otpauth_url = os.getenv('otpauth', None)
@@ -397,7 +398,7 @@ def signInOut():
         try:
             workContent = driver.find_element(By.ID, 'AttendWork')
             # workContent.click()  # Removed to avoid ElementClickInterceptedException
-            workContent.send_keys('MCL工讀')
+            workContent.send_keys(work_content)
             time.sleep(.5)
 
             signin_button = driver.find_element(By.ID, 'signin')
@@ -433,7 +434,7 @@ def signInOut():
                 signin_button = driver.find_element(By.ID, 'signin')
                 workContent = driver.find_element(By.ID, 'AttendWork')
                 # workContent.click()  # Removed to avoid ElementClickInterceptedException
-                workContent.send_keys('MCL工讀')
+                workContent.send_keys(work_content)
                 time.sleep(.5)
 
                 signin_button = driver.find_element(By.ID, 'signin')

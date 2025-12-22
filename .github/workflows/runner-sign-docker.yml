@@ -6,6 +6,11 @@ on:
       project_name:
         description: 'Project Name'
         required: false
+        default: '計畫：數學系'
+      work_content:
+        description: 'Work Content'
+        required: false
+        default: 'MCL工讀'
 
 jobs:
   run-signin:
@@ -27,6 +32,7 @@ jobs:
         otpauth="${{ secrets.otpauth }}"
         cookies="${{ secrets.cookies }}"
         project_name="${{ github.event.inputs.project_name }}"
+        work_content="${{ github.event.inputs.work_content }}"
         discord_webhook_url="${{ secrets.discord_webhook_url }}"
         discord_token="${{ secrets.discord_token }}"
         discord_guild_id="${{ secrets.discord_guild_id }}"
@@ -38,6 +44,7 @@ jobs:
           -e otpauth="$otpauth" \
           -e cookies="$cookies" \
           -e project_name="$project_name" \
+          -e work_content="$work_content" \
           -e discord_webhook_url="$discord_webhook_url" \
           -e discord_token="$discord_token" \
           -e discord_guild_id="$discord_guild_id" \
