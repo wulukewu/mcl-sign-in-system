@@ -2,6 +2,11 @@ name: Sign In or Sign Out
 
 on:
   workflow_dispatch:
+    inputs:
+      project_name:
+        description: 'Project Name'
+        required: false
+        default: '計畫：數學系'
 
 jobs:
   run-sign:
@@ -27,6 +32,7 @@ jobs:
           password: ${{ secrets.password }}
           otpauth: ${{ secrets.otpauth }}
           cookies: ${{ secrets.cookies }}
+          project_name: ${{ github.event.inputs.project_name }}
           discord_webhook_url: ${{ secrets.discord_webhook_url }}
           discord_token: ${{ secrets.discord_token }}
           discord_guild_id: ${{ secrets.discord_guild_id }}

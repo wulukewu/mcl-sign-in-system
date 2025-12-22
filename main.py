@@ -27,6 +27,7 @@ def signInOut():
     # Load account info variables
     username = os.getenv('username')
     password = os.getenv('password')
+    project_name = os.getenv('project_name', '計畫：數學系')
 
     # Check for OTP availability
     otpauth_url = os.getenv('otpauth', None)
@@ -316,7 +317,7 @@ def signInOut():
             cells = row.find_elements(By.TAG_NAME, "td")
             
             # Check if it's a data row and matches the project name
-            if len(cells) > 1 and "計畫：數學系" in cells[1].text:
+            if len(cells) > 1 and project_name in cells[1].text:
                 print(f"[INFO] Found target project: {cells[1].text}")
                 project_found = True
                 
@@ -363,7 +364,7 @@ def signInOut():
         print(f"[ERR] Error processing table: {e}")
 
     if not project_found:
-        print('[WARN] Target project "計畫：數學系" not found.')
+        print(f'[WARN] Target project "{project_name}" not found.')
         if inorout == 'signin':
             print('[ERR] Cannot sign in because project was not found to click the button.')
             driver.quit()
