@@ -7,6 +7,8 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 import notification as nt
 
@@ -316,33 +318,62 @@ def signInOut():
             # Check if it's a data row and matches the project name
             if len(cells) > 1 and "計畫：數學系" in cells[1].text:
                 print(f"[INFO] Found target project: {cells[1].text}")
+                project_found = True
                 
                 try:
                     # Find the '新增簽到' button in this row. 
-                    add_signin_button = row.find_element(By.XPATH, ".//a[contains(text(), '新增簽到')]")
+                    buttons = row.find_elements(By.XPATH, ".//a[contains(text(), '新增簽到')]")
                     
-                    try:
-                        actions.move_to_element(add_signin_button).click().perform()
-                        print('[INFO] Clicked add_signin_button via ActionChains.')
-                    except Exception as click_err:
-                        print(f"[WARN] Standard click failed, trying JavaScript click: {click_err}")
-                        driver.execute_script("arguments[0].click();", add_signin_button)
-                        print('[INFO] Clicked add_signin_button via JavaScript.')
-                    
-                    add_signin_clicked = True
-                    project_found = True
-                    break
+                    if buttons:
+                        add_signin_button = buttons[0]
+                        if add_signin_button.is_displayed() and add_signin_button.is_enabled():
+                            try:
+                                actions.move_to_element(add_signin_button).click().perform()
+                                print('[INFO] Clicked add_signin_button via ActionChains.')
+                            except Exception as click_err:
+                                print(f"[WARN] Standard click failed, trying JavaScript click: {click_err}")
+                                driver.execute_script("arguments[0].click();", add_signin_button)
+                                print('[INFO] Clicked add_signin_button via JavaScript.')
+                            
+                            # Verify modal opened
+                            try:
+                                WebDriverWait(driver, 3).until(
+                                    EC.visibility_of_element_located((By.ID, "AttendWork"))
+                                )
+                                print('[INFO] Sign-in modal opened successfully.')
+                                add_signin_clicked = True
+                                
+                                # If successful, we are definitely signing in
+                                if inorout is None:
+                                    inorout = 'signin'
+                                    
+                            except Exception as wait_err:
+                                print(f"[WARN] Clicked button but modal did not appear: {wait_err}")
+                            
+                            break
+                        else:
+                            print("[WARN] '新增簽到' button found but is not clickable (not displayed or disabled).")
+                    else:
+                        print("[WARN] '新增簽到' button not found in this row.")
+                        
                 except Exception as e:
-                    print(f"[WARN] Found project but could not find or click button: {e}")
+                    print(f"[WARN] Found project but encountered error interacting with button: {e}")
                     
     except Exception as e:
         print(f"[ERR] Error processing table: {e}")
 
     if not project_found:
         print('[WARN] Target project "計畫：數學系" not found.')
+        if inorout == 'signin':
+            print('[ERR] Cannot sign in because project was not found to click the button.')
+            driver.quit()
+            print('[INFO] Return code: 600')
+            return 600
     
+    # If project found but we failed to open the modal (button unclickable, click failed, etc.)
+    # We must abort to avoid errors, as requested.
     if project_found and not add_signin_clicked:
-        print('[ERR] Target project found but failed to click the button.')
+        print('[ERR] Target project found but failed to open sign-in modal. Aborting.')
         driver.quit()
         print('[INFO] Return code: 600')
         return 600
@@ -352,14 +383,20 @@ def signInOut():
     button_clicked = False
 
     if inorout == 'signin':
-        workContent = driver.find_element(By.ID, 'AttendWork')
-        # workContent.click()  # Removed to avoid ElementClickInterceptedException
-        workContent.send_keys('MCL工讀')
-        time.sleep(.5)
+        try:
+            workContent = driver.find_element(By.ID, 'AttendWork')
+            # workContent.click()  # Removed to avoid ElementClickInterceptedException
+            workContent.send_keys('MCL工讀')
+            time.sleep(.5)
 
-        signin_button = driver.find_element(By.ID, 'signin')
-        driver.execute_script("arguments[0].click();", signin_button)
-        button_clicked = True
+            signin_button = driver.find_element(By.ID, 'signin')
+            driver.execute_script("arguments[0].click();", signin_button)
+            button_clicked = True
+        except Exception as e:
+            print(f"[ERR] Failed to perform sign-in actions (modal likely missing): {e}")
+            driver.quit()
+            print('[INFO] Return code: 600')
+            return 600
 
     elif inorout == 'signout':
         signout_button = driver.find_element(By.ID, 'signout')
