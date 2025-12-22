@@ -482,6 +482,9 @@ if __name__ == '__main__':
         elif result_code == 100:
             print('[WARN] Error code 100 detected. No retry needed.')
             break
+        elif result_code == 600:
+            print('[WARN] Error code 600 detected (button/modal issue). No retry needed.')
+            break
 
         # time.sleep(60)
 
