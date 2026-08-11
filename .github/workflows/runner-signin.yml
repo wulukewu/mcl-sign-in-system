@@ -24,6 +24,11 @@ jobs:
           pip install --upgrade setuptools
           pip install -r requirements.txt
 
+      - name: Setup WireGuard (optional)
+        uses: ./.github/actions/setup-wireguard
+        with:
+          config: ${{ secrets.wg_conf }}
+
       - name: Run Sign In
         env:
           inorout: signin

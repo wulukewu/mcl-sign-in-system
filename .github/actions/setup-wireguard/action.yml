@@ -1,0 +1,41 @@
+name: Setup WireGuard
+description: >
+  Optionally establish a WireGuard tunnel on the runner so the sign-in/sign-out
+  request appears to come from a configured network (e.g. campus) and may skip
+  CAPTCHA. Does nothing when the config input is empty, so existing workflows
+  are unaffected.
+
+inputs:
+  config:
+    description: >
+      Content of a wg0.conf file. Leave empty to skip the tunnel setup.
+    required: false
+    default: ""
+
+runs:
+  using: composite
+  steps:
+    - name: Install WireGuard tools
+      if: ${{ inputs.config != '' }}
+      shell: bash
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y wireguard-tools
+
+    - name: Start WireGuard tunnel
+      if: ${{ inputs.config != '' }}
+      shell: bash
+      run: |
+        set -euo pipefail
+        sudo tee /etc/wireguard/wg0.conf >/dev/null <<'__WG_CONF_EOF__'
+        ${{ inputs.config }}
+        __WG_CONF_EOF__
+        sudo chmod 600 /etc/wireguard/wg0.conf
+        if sudo modprobe wireguard 2>/dev/null; then
+          sudo wg-quick up wg0
+        else
+          echo "Kernel WireGuard module unavailable; falling back to wireguard-go (user-space)."
+          sudo apt-get install -y wireguard-go
+          sudo env WG_QUICK_USERSPACE_IMPLEMENTATION=wireguard-go wg-quick up wg0
+        fi
+        sudo wg show

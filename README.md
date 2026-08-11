@@ -44,7 +44,31 @@ If you're using GitHub Actions, add the following secrets under your repository 
 - `discord_token` [optional]: Discord bot token to send notifications.
 - `discord_guild_id` [optional]: Discord guild (server) ID where the notification should be sent.
 - `discord_channel_id` [optional]: Discord channel ID where the notification should be sent.
+- `wg_conf` [optional]: Content of a WireGuard config file (`wg0.conf`). If provided, the workflow will establish a WireGuard tunnel before running the script, so the request comes from the configured network (e.g. on-campus) and may bypass the CAPTCHA that is usually shown outside the campus network. If not provided, the tunnel step is skipped entirely.
   Remember to adjust the `inorout` value as needed.
+
+## WireGuard Tunnel (Optional)
+
+When the sign-in/sign-out job runs on GitHub Actions, its network comes from GitHub's datacenter (off-campus). The portal may therefore show a reCAPTCHA. If you have a WireGuard server reachable from the campus network (or from whichever network lets the portal log in without CAPTCHA), you can route the runner through it.
+
+1. Prepare a `wg0.conf` file, e.g.:
+
+```ini
+[Interface]
+PrivateKey = ...
+Address = 10.0.0.2/24
+
+[Peer]
+PublicKey = ...
+AllowedIPs = 0.0.0.0/0
+Endpoint = campus-vpn.example.com:51820
+```
+
+2. Add the **whole file content** as a repository secret named `wg_conf` (Settings → Secrets and variables → Actions → New repository secret, then paste the multi-line content into the value field).
+
+3. Nothing else needs to change. The `Setup WireGuard (optional)` step in every workflow activates only when `wg_conf` exists; otherwise it is skipped and the pipeline behaves exactly as before.
+
+Note: `AllowedIPs` decides which traffic goes through the tunnel. Use the portal's network range instead of `0.0.0.0/0` if your WireGuard server does not route all traffic.
 
 ## Parameters
 

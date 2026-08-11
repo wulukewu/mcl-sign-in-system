@@ -19,6 +19,11 @@ jobs:
     - name: Docker Pull
       run: docker pull wulukewu/mcl-sign-in-system:latest
 
+    - name: Setup WireGuard (optional)
+      uses: ./.github/actions/setup-wireguard
+      with:
+        config: ${{ secrets.wg_conf }}
+
     - name: Docker Sign Out
       run: |      
         username="${{ secrets.username }}"
