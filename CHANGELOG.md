@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.7.0](https://github.com/wulukewu/mcl-sign-in-system/compare/v1.6.0...v1.7.0) (2026-08-11)
+
+
+### Features
+
+* **ci:** support optional wireguard tunnel on sign-in/sign-out runners ([de894f5](https://github.com/wulukewu/mcl-sign-in-system/commit/de894f563046beec5e7e1921a2abfbdb46b7d8b7))
+
 ## [1.6.0](https://github.com/wulukewu/mcl-sign-in-system/compare/v1.5.10...v1.6.0) (2025-10-25)
 
 
