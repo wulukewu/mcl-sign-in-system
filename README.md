@@ -23,6 +23,8 @@ docker run -e username=your_username \
            -e otpauth=your_otpauth_url \
            -e inorout=signout \
            -e cookies="key1=value1; key2=value2; ..." \
+           -e project_name="計畫：數學系" \
+           -e work_content="MCL工讀" \
            -e discord_webhook_url=your_discord_webhook_url \
            -e discord_token=your_discord_token \
            -e discord_guild_id=your_discord_guild_id \
@@ -40,6 +42,8 @@ If you're using GitHub Actions, add the following secrets under your repository 
 - `password`: Password for your portal login.
 - `otpauth` [optional]: OTP URL to generate a one-time password (OTP) for two-factor authentication.
 - `cookies` [optional]: String of cookies in the format `key1=value1; key2=value2; ...` to use for authentication.
+- `project_name` [optional]: The name of the project to sign in to (e.g., "計畫：數學系"). Defaults to "計畫：數學系".
+- `work_content` [optional]: The work content description to fill in (e.g., "MCL工讀"). Defaults to "MCL工讀".
 - `discord_webhook_url` [optional]: Discord webhook URL to send notifications. This can be used as an alternative to `discord_token`, `discord_guild_id`, and `discord_channel_id`.
 - `discord_token` [optional]: Discord bot token to send notifications.
 - `discord_guild_id` [optional]: Discord guild (server) ID where the notification should be sent.
@@ -79,6 +83,8 @@ The following parameters are configured using environment variables. These can b
 - **`password`**: Password for your portal login.
 - **`otpauth`** [optional]: OTP URL to generate a one-time password (OTP) for two-factor authentication. If not provided, OTP authentication will be skipped. Set to `"None"` if you do not use OTP.
 - **`cookies`** [optional]: String of cookies in the format `key1=value1; key2=value2; ...` to use for authentication. If not provided, cookies will not be used.
+- **`project_name`** [optional]: The name of the project to sign in to. Defaults to `"計畫：數學系"`.
+- **`work_content`** [optional]: The work content description to fill in. Defaults to `"MCL工讀"`.
 - **`discord_webhook_url`** [optional]: Discord webhook URL to send notifications. If provided, a notification will be sent via webhook. This can be used as an alternative to `discord_token`, `discord_guild_id`, and `discord_channel_id`.
 - **`discord_token`** [optional]: Discord bot token to send notifications. If provided, a notification will be sent to the specified channel.
 - **`discord_guild_id`** [optional]: Discord guild (server) ID where the notification should be sent. Required if `discord_token` is provided.
@@ -176,15 +182,15 @@ If you want to sign in or out, you can set the `-e inorout=signin` or `-e inorou
 
 ## Return Codes
 
-The script will return the following codes to indicate the outcome of the execution:
+The script returns the following descriptive status codes (constants defined in `main.py`):
 
-- `000`: Successfully completed the sign-in or sign-out action.
-- `100`: Alert message detected, nothing to do.
-- `200`: Potentially malicious website detected.
-- `300`: Failed to solve reCAPTCHA.
-- `400`: Failed to find the audio source for reCAPTCHA.
-- `500`: Failed to enter the audio passcode.
-- `600`: Invalid `inorout` option.
+- `SUCCESS`: Successfully completed the sign-in or sign-out action.
+- `ALERT`: Alert message detected, nothing to do.
+- `MALICIOUS`: Potentially malicious website detected.
+- `RECAPTCHA_FAIL`: Failed to solve reCAPTCHA.
+- `AUDIO_FAIL`: Failed to find the audio source or convert audio for reCAPTCHA.
+- `PASSCODE_FAIL`: Failed to enter the audio passcode.
+- `ACTION_FAIL`: Invalid `inorout` option, project not found, or button not clickable.
 
 ## References
 
